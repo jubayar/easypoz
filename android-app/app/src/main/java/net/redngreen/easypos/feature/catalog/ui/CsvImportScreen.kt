@@ -1,4 +1,4 @@
-package net.redngreen.easypos.ui.catalog
+package net.redngreen.easypos.feature.catalog.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -23,8 +25,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,25 +32,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
 import net.redngreen.easypos.feature.catalog.domain.ImportStatus
-import net.redngreen.easypos.ui.catalog.CsvImportViewModel.UiState
+import net.redngreen.easypos.feature.catalog.ui.model.CsvImportAction
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * CSV import flow (task 6.4): choose file → parse preview → apply →
  * per-row report with reasons and retry of just the failed rows.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CsvImportScreen(
+fun CsvImportRoot(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CsvImportViewModel = hiltViewModel(),
+    viewModel: CsvImportViewModel = koinViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val pickFile = rememberLauncherForActivityResult(
@@ -58,10 +55,33 @@ fun CsvImportScreen(
     ) { uri ->
         if (uri != null) {
             val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            if (bytes != null) viewModel.onFilePicked(bytes)
+            if (bytes != null) viewModel.onAction(CsvImportAction.FilePicked(bytes))
         }
     }
 
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    CsvImportScreen(
+        state = state,
+        onAction = viewModel::onAction,
+        onBack = onBack,
+        onPickFile = {
+            pickFile.launch(
+                arrayOf("text/csv", "text/comma-separated-values", "application/csv", "text/plain")
+            )
+        },
+        modifier = modifier,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CsvImportScreen(
+    state: CsvImportViewModel.UiState,
+    onAction: (CsvImportAction) -> Unit,
+    onBack: () -> Unit,
+    onPickFile: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -77,7 +97,7 @@ fun CsvImportScreen(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding).padding(24.dp)) {
             when (val s = state) {
-                is UiState.Idle -> Column(
+                is CsvImportViewModel.UiState.Idle -> Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
                     modifier = Modifier.fillMaxSize(),
@@ -87,21 +107,17 @@ fun CsvImportScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.fillMaxWidth(0.7f),
                     )
-                    Button(onClick = {
-                        pickFile.launch(
-                            arrayOf("text/csv", "text/comma-separated-values", "application/csv", "text/plain")
-                        )
-                    }) {
+                    Button(onClick = onPickFile) {
                         Text(stringResource(R.string.csv_import_pick))
                     }
                 }
 
-                is UiState.Parsing, is UiState.Importing -> Box(
+                is CsvImportViewModel.UiState.Parsing, is CsvImportViewModel.UiState.Importing -> Box(
                     Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) { CircularProgressIndicator() }
 
-                is UiState.Error -> Column(
+                is CsvImportViewModel.UiState.Error -> Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
                     modifier = Modifier.fillMaxSize(),
@@ -116,12 +132,12 @@ fun CsvImportScreen(
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.fillMaxWidth(0.7f),
                     )
-                    OutlinedButton(onClick = viewModel::reset) {
+                    OutlinedButton(onClick = { onAction(CsvImportAction.Reset) }) {
                         Text(stringResource(R.string.action_back))
                     }
                 }
 
-                is UiState.Ready -> Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                is CsvImportViewModel.UiState.Ready -> Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(
                         text = stringResource(
                             R.string.csv_import_preview,
@@ -147,7 +163,10 @@ fun CsvImportScreen(
                         }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Button(onClick = viewModel::import, enabled = s.parsed.rows.isNotEmpty()) {
+                        Button(
+                            onClick = { onAction(CsvImportAction.Import) },
+                            enabled = s.parsed.rows.isNotEmpty(),
+                        ) {
                             Text(
                                 stringResource(
                                     R.string.csv_import_apply,
@@ -155,13 +174,13 @@ fun CsvImportScreen(
                                 )
                             )
                         }
-                        OutlinedButton(onClick = viewModel::reset) {
+                        OutlinedButton(onClick = { onAction(CsvImportAction.Reset) }) {
                             Text(stringResource(R.string.csv_import_choose_other))
                         }
                     }
                 }
 
-                is UiState.Done -> Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                is CsvImportViewModel.UiState.Done -> Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     val summary = s.summary
                     Text(
                         text = stringResource(
@@ -205,7 +224,7 @@ fun CsvImportScreen(
                                 }
                             }
                         }
-                        Button(onClick = viewModel::retryFailed) {
+                        Button(onClick = { onAction(CsvImportAction.RetryFailed) }) {
                             Text(stringResource(R.string.csv_import_retry_failed))
                         }
                     } else {
@@ -214,7 +233,7 @@ fun CsvImportScreen(
                             color = MaterialTheme.colorScheme.primary,
                         )
                     }
-                    OutlinedButton(onClick = viewModel::reset) {
+                    OutlinedButton(onClick = { onAction(CsvImportAction.Reset) }) {
                         Text(stringResource(R.string.csv_import_another))
                     }
                 }

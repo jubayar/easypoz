@@ -13,10 +13,10 @@ import androidx.navigation3.ui.NavDisplay
 import net.redngreen.easypos.ui.activity.ActivityLogScreen
 import net.redngreen.easypos.ui.backup.BackupScreen
 import net.redngreen.easypos.ui.cash.CashScreen
-import net.redngreen.easypos.ui.catalog.CategoriesScreen
-import net.redngreen.easypos.ui.catalog.CsvImportScreen
-import net.redngreen.easypos.ui.catalog.ProductEditScreen
-import net.redngreen.easypos.ui.catalog.ProductsScreen
+import net.redngreen.easypos.feature.catalog.ui.CategoriesRoot
+import net.redngreen.easypos.feature.catalog.ui.CsvImportRoot
+import net.redngreen.easypos.feature.catalog.ui.ProductEditRoot
+import net.redngreen.easypos.feature.catalog.ui.ProductsRoot
 import net.redngreen.easypos.ui.history.SalesHistoryScreen
 import net.redngreen.easypos.ui.main.AppShell
 import net.redngreen.easypos.ui.main.MainScreen
@@ -85,7 +85,7 @@ fun MainNavigation() {
           ActivityLogScreen(onBack = { backStack.removeLastOrNull() })
         }
         entry<Products> {
-          ProductsScreen(
+          ProductsRoot(
             onBack = { backStack.removeLastOrNull() },
             onEditProduct = { productId -> backStack.add(ProductEdit(productId)) },
             onOpenCategories = { backStack.add(Categories) },
@@ -93,17 +93,17 @@ fun MainNavigation() {
           )
         }
         entry<ProductEdit> { key ->
-          ProductEditScreen(
+          ProductEditRoot(
             productId = key.productId,
             prefillBarcode = key.prefillBarcode,
             onDone = { backStack.removeLastOrNull() },
           )
         }
         entry<Categories> {
-          CategoriesScreen(onBack = { backStack.removeLastOrNull() })
+          CategoriesRoot(onBack = { backStack.removeLastOrNull() })
         }
         entry<CsvImport> {
-          CsvImportScreen(onBack = { backStack.removeLastOrNull() })
+          CsvImportRoot(onBack = { backStack.removeLastOrNull() })
         }
         entry<SalesHistory> {
           SalesHistoryScreen(onBack = { backStack.removeLastOrNull() })

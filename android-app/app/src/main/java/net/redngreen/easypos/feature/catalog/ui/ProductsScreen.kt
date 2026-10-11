@@ -1,4 +1,4 @@
-package net.redngreen.easypos.ui.catalog
+package net.redngreen.easypos.feature.catalog.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,10 +33,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,31 +44,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import net.redngreen.easypos.R
 import net.redngreen.easypos.core.money.MoneyFormatter
+import net.redngreen.easypos.feature.catalog.ui.ProductsAction
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Product management list (task 6.2 / 6.6): search-as-you-type, entry to
  * create/edit, categories, CSV import, and CSV export (task 6.5) — the
  * full catalog incl. inactive rows (spec).
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductsScreen(
+fun ProductsRoot(
     onBack: () -> Unit,
     onEditProduct: (String?) -> Unit,
     onOpenCategories: () -> Unit,
     onOpenImport: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ProductsViewModel = hiltViewModel(),
+    viewModel: ProductsViewModel = koinViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var menuOpen by remember { mutableStateOf(false) }
 
     // Export (task 6.5): CreateDocument gives a fresh URI; we stream the CSV into it.
     val exportLauncher = rememberLauncherForActivityResult(
@@ -84,6 +81,33 @@ fun ProductsScreen(
             }
         }
     }
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    ProductsScreen(
+        state = state,
+        onAction = viewModel::onAction,
+        onBack = onBack,
+        onEditProduct = onEditProduct,
+        onOpenCategories = onOpenCategories,
+        onOpenImport = onOpenImport,
+        onExport = { exportLauncher.launch("easypos-products.csv") },
+        modifier = modifier,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProductsScreen(
+    state: ProductsUiState,
+    onAction: (ProductsAction) -> Unit,
+    onBack: () -> Unit,
+    onEditProduct: (String?) -> Unit,
+    onOpenCategories: () -> Unit,
+    onOpenImport: () -> Unit,
+    onExport: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var menuOpen by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -113,7 +137,7 @@ fun ProductsScreen(
                         )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.csv_export_title)) },
-                            onClick = { menuOpen = false; exportLauncher.launch("easypos-products.csv") },
+                            onClick = { menuOpen = false; onExport() },
                         )
                     }
                 },
@@ -134,7 +158,7 @@ fun ProductsScreen(
             else -> Column(Modifier.fillMaxSize().padding(padding)) {
                 OutlinedTextField(
                     value = state.query,
-                    onValueChange = viewModel::setQuery,
+                    onValueChange = { onAction(ProductsAction.SetQuery(it)) },
                     singleLine = true,
                     label = { Text(stringResource(R.string.catalog_search_hint)) },
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
@@ -184,7 +208,7 @@ private fun ProductListRow(
                 color = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier.size(40.dp),
             ) {}
-            Spacer(Modifier.width(12.dp))
+            androidx.compose.foundation.layout.Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(name, style = MaterialTheme.typography.titleMedium)
                 Text(
@@ -198,7 +222,7 @@ private fun ProductListRow(
                 style = MaterialTheme.typography.titleMedium,
             )
             if (!active) {
-                Spacer(Modifier.width(8.dp))
+                androidx.compose.foundation.layout.Spacer(Modifier.width(8.dp))
                 AssistChip(onClick = {}, label = { Text(stringResource(R.string.user_inactive)) })
             }
         }

@@ -1,29 +1,26 @@
-package net.redngreen.easypos.ui.catalog
+package net.redngreen.easypos.feature.catalog.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import net.redngreen.easypos.core.model.Permission
+import net.redngreen.easypos.core.session.SessionManager
 import net.redngreen.easypos.feature.catalog.data.CsvCatalogParser
 import net.redngreen.easypos.feature.catalog.domain.CatalogCsvRow
 import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
-import net.redngreen.easypos.feature.catalog.domain.ImportStatus
 import net.redngreen.easypos.feature.catalog.domain.ImportSummary
-import net.redngreen.easypos.core.model.Permission
-import net.redngreen.easypos.core.session.SessionManager
+import net.redngreen.easypos.feature.catalog.ui.model.CsvImportAction
 
 /**
  * CSV import (task 6.4): pick a file → tolerant parse → per-row apply with a
  * created/updated/failed report; failures can be retried alone. Bad rows
  * never abort the import (product-catalog spec).
  */
-@HiltViewModel
-class CsvImportViewModel @Inject constructor(
+class CsvImportViewModel(
     private val session: SessionManager,
     private val catalog: CatalogRepository,
 ) : ViewModel() {
@@ -52,7 +49,16 @@ class CsvImportViewModel @Inject constructor(
     private var gated = false
     private var allowed = false
 
-    fun onFilePicked(bytes: ByteArray) {
+    fun onAction(action: CsvImportAction) {
+        when (action) {
+            is CsvImportAction.FilePicked -> onFilePicked(action.bytes)
+            CsvImportAction.Import -> import()
+            CsvImportAction.RetryFailed -> retryFailed()
+            CsvImportAction.Reset -> reset()
+        }
+    }
+
+    private fun onFilePicked(bytes: ByteArray) {
         _state.value = UiState.Parsing
         viewModelScope.launch {
             if (!gated) {
@@ -76,16 +82,16 @@ class CsvImportViewModel @Inject constructor(
         }
     }
 
-    fun import() {
+    private fun import() {
         val ready = _state.value as? UiState.Ready ?: return
         applyRows(ready.parsed.rows)
     }
 
     /** Retry only the rows that failed at apply time (row numbers → rows). */
-    fun retryFailed() {
+    private fun retryFailed() {
         val done = _state.value as? UiState.Done ?: return
         val failedNumbers = done.summary.outcomes
-            .filter { it.status == ImportStatus.FAILED }
+            .filter { it.status == net.redngreen.easypos.feature.catalog.domain.ImportStatus.FAILED }
             .map { it.rowNumber }
             .toSet()
         val retryRows = lastParsedRows.filter { it.rowNumber in failedNumbers }
@@ -102,7 +108,7 @@ class CsvImportViewModel @Inject constructor(
         }
     }
 
-    fun reset() {
+    private fun reset() {
         lastParsedRows = emptyList()
         _state.value = UiState.Idle
     }

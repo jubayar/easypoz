@@ -1,4 +1,4 @@
-package net.redngreen.easypos.ui.catalog
+package net.redngreen.easypos.feature.catalog.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,11 +28,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,28 +38,43 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Category CRUD (task 6.1): the tabs of the sell screen. Reorder with the
  * arrows, then Apply persists the new order (journaled per changed row).
  */
+@Composable
+fun CategoriesRoot(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: CategoriesViewModel = koinViewModel(),
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    CategoriesScreen(
+        state = state,
+        onAction = viewModel::onAction,
+        onBack = onBack,
+        modifier = modifier,
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreen(
+    state: CategoriesUiState,
+    onAction: (CategoriesAction) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CategoriesViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val messageText = state.message
     LaunchedEffect(messageText) {
         if (messageText != null) {
             snackbar.showSnackbar(messageText)
-            viewModel.consumeMessage()
+            onAction(CategoriesAction.ConsumeMessage)
         }
     }
 
@@ -78,7 +93,7 @@ fun CategoriesScreen(
                 },
                 actions = {
                     TextButton(
-                        onClick = { viewModel.applyOrder() },
+                        onClick = { onAction(CategoriesAction.ApplyOrder) },
                         enabled = state.categories.any { c -> c.sortOrder != state.categories.indexOf(c) },
                     ) { Text(stringResource(R.string.categories_apply_order)) }
                     IconButton(onClick = { dialog = null to "" }) {
@@ -116,10 +131,10 @@ fun CategoriesScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.weight(1f),
                             )
-                            IconButton(onClick = { viewModel.move(category.id, up = true) }) {
+                            IconButton(onClick = { onAction(CategoriesAction.Move(category.id, up = true)) }) {
                                 Icon(Icons.Filled.KeyboardArrowUp, stringResource(R.string.categories_move_up))
                             }
-                            IconButton(onClick = { viewModel.move(category.id, up = false) }) {
+                            IconButton(onClick = { onAction(CategoriesAction.Move(category.id, up = false)) }) {
                                 Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.categories_move_down))
                             }
                             TextButton(onClick = { dialog = category.id to category.name }) {
@@ -154,7 +169,8 @@ fun CategoriesScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        if (id == null) viewModel.addCategory(name) else viewModel.renameCategory(id, name)
+                        if (id == null) onAction(CategoriesAction.Add(name))
+                        else onAction(CategoriesAction.Rename(id, name))
                         dialog = null
                     },
                     enabled = name.isNotBlank(),

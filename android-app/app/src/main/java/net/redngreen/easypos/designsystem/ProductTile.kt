@@ -1,12 +1,9 @@
-package net.redngreen.easypos.ui.catalog
+package net.redngreen.easypos.designsystem
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,9 +23,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.redngreen.easypos.R
-import net.redngreen.easypos.feature.catalog.domain.Product
 import net.redngreen.easypos.core.money.MoneyFormatter
-import net.redngreen.easypos.designsystem.EasyPOSTheme
+import net.redngreen.easypos.feature.catalog.domain.Product
 
 /**
  * Product tile (product-catalog spec): photo or a generated identity
@@ -113,8 +109,8 @@ private fun tileColor(colorHex: String?): Color {
 @Composable
 private fun ProductTilePreview() {
     EasyPOSTheme {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        androidx.compose.foundation.layout.Row(
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(8.dp),
         ) {
             ProductTile(

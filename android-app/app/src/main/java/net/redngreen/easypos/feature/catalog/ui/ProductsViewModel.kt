@@ -1,20 +1,18 @@
-package net.redngreen.easypos.ui.catalog
+package net.redngreen.easypos.feature.catalog.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import net.redngreen.easypos.feature.catalog.domain.Category
-import net.redngreen.easypos.feature.catalog.domain.Product
-import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import kotlinx.coroutines.launch
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.session.SessionManager
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.Category
+import net.redngreen.easypos.feature.catalog.domain.Product
 
 data class ProductRow(
     val product: Product,
@@ -29,13 +27,16 @@ data class ProductsUiState(
     val totalCount: Int = 0,
 )
 
+sealed interface ProductsAction {
+    data class SetQuery(val value: String) : ProductsAction
+}
+
 /**
  * Catalog management list (tasks 6.2/6.6): search-as-you-type over partial
  * name / barcode prefix / SKU prefix, barcode-exact hits ranked first —
  * the same ranking the sell screen's capture field uses.
  */
-@HiltViewModel
-class ProductsViewModel @Inject constructor(
+class ProductsViewModel(
     private val session: SessionManager,
     private val catalog: CatalogRepository,
 ) : ViewModel() {
@@ -69,8 +70,10 @@ class ProductsViewModel @Inject constructor(
         }
     }
 
-    fun setQuery(value: String) {
-        query.value = value
+    fun onAction(action: ProductsAction) {
+        when (action) {
+            is ProductsAction.SetQuery -> query.value = action.value
+        }
     }
 
     suspend fun exportCsv(): String = catalog.exportCsv()

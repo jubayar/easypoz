@@ -1,25 +1,21 @@
-package net.redngreen.easypos.ui.catalog
+package net.redngreen.easypos.feature.catalog.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.feature.catalog.domain.CatalogError
-import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
-import net.redngreen.easypos.feature.catalog.domain.ProductFields
-import net.redngreen.easypos.feature.catalog.domain.Category
-import net.redngreen.easypos.feature.catalog.domain.Product
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.core.session.SessionManager
+import net.redngreen.easypos.feature.catalog.domain.CatalogError
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.Category
+import net.redngreen.easypos.feature.catalog.domain.Product
+import net.redngreen.easypos.feature.catalog.domain.ProductFields
 
 enum class ProductEditError {
     INVALID_NAME,
@@ -64,13 +60,40 @@ data class ProductEditUiState(
     val saved: Boolean = false,
 )
 
+sealed interface ProductEditAction {
+    data class Load(val productId: String?, val prefillBarcode: String?) : ProductEditAction
+
+    data class SetName(val value: String) : ProductEditAction
+
+    data class SetCategoryId(val value: String?) : ProductEditAction
+
+    data class SetBarcode(val value: String) : ProductEditAction
+
+    data class SetSku(val value: String) : ProductEditAction
+
+    data class SetEmoji(val value: String) : ProductEditAction
+
+    data class SetLocation(val value: String) : ProductEditAction
+
+    data class SetActive(val value: Boolean) : ProductEditAction
+
+    data class SetCost(val value: String) : ProductEditAction
+
+    data class SetPrice(val value: String) : ProductEditAction
+
+    data class SetInitialStock(val value: String) : ProductEditAction
+
+    data class SetThreshold(val value: String) : ProductEditAction
+
+    data object Save : ProductEditAction
+}
+
 /**
  * Create/edit a product (task 6.2). The margin preview recomputes as
  * cost/price are typed; save enforces barcode uniqueness and journals
  * everything (plus the initial stock delta on create).
  */
-@HiltViewModel
-class ProductEditViewModel @Inject constructor(
+class ProductEditViewModel(
     private val session: SessionManager,
     private val catalog: CatalogRepository,
 ) : ViewModel() {
@@ -81,7 +104,37 @@ class ProductEditViewModel @Inject constructor(
     private var started = false
     private var productId: String? = null
 
-    fun load(id: String?, prefillBarcode: String? = null) {
+    fun onAction(action: ProductEditAction) {
+        when (action) {
+            is ProductEditAction.Load -> load(action.productId, action.prefillBarcode)
+            is ProductEditAction.SetName -> edit { it.copy(name = action.value, error = null, errorDetail = null) }
+            is ProductEditAction.SetCategoryId -> edit { it.copy(categoryId = action.value) }
+            is ProductEditAction.SetBarcode -> edit { it.copy(barcode = action.value, error = null, errorDetail = null) }
+            is ProductEditAction.SetSku -> edit { it.copy(sku = action.value) }
+            is ProductEditAction.SetEmoji -> edit { it.copy(emoji = action.value.take(4)) }
+            is ProductEditAction.SetLocation -> edit { it.copy(location = action.value) }
+            is ProductEditAction.SetActive -> edit { it.copy(active = action.value) }
+            is ProductEditAction.SetCost -> edit {
+                it.copy(costText = action.value, margin = marginOfSafe(action.value, it.priceText))
+            }
+
+            is ProductEditAction.SetPrice -> edit {
+                it.copy(priceText = action.value, margin = marginOfSafe(it.costText, action.value))
+            }
+
+            is ProductEditAction.SetInitialStock -> edit {
+                it.copy(initialStockText = action.value.filter(Char::isDigit))
+            }
+
+            is ProductEditAction.SetThreshold -> edit {
+                it.copy(thresholdText = action.value.filter(Char::isDigit).take(4))
+            }
+
+            ProductEditAction.Save -> save()
+        }
+    }
+
+    private fun load(id: String?, prefillBarcode: String?) {
         if (started) return
         started = true
         productId = id
@@ -99,7 +152,7 @@ class ProductEditViewModel @Inject constructor(
                 catalog.observeProducts(),
                 catalog.observeCategories(),
             ) { products, categories ->
-                val existing = productId?.let { id -> products.firstOrNull { it.id == id } }
+                val existing = productId?.let { pid -> products.firstOrNull { it.id == pid } }
                 Triple(existing, categories, products.any())
             }.collect { (existing, categories, productsLoaded) ->
                 _state.update { current ->
@@ -141,32 +194,6 @@ class ProductEditViewModel @Inject constructor(
         }
     }
 
-    // ─── Field setters (cost/price recompute the margin preview) ─────────────
-
-    fun setName(v: String) = edit { it.copy(name = v, error = null, errorDetail = null) }
-    fun setCategoryId(v: String?) = edit { it.copy(categoryId = v) }
-    fun setBarcode(v: String) = edit { it.copy(barcode = v, error = null, errorDetail = null) }
-    fun setSku(v: String) = edit { it.copy(sku = v) }
-    fun setEmoji(v: String) = edit { it.copy(emoji = v.take(4)) }
-    fun setLocation(v: String) = edit { it.copy(location = v) }
-    fun setActive(v: Boolean) = edit { it.copy(active = v) }
-
-    fun setCost(v: String) = edit {
-        it.copy(costText = v, margin = marginOfSafe(v, it.priceText))
-    }
-
-    fun setPrice(v: String) = edit {
-        it.copy(priceText = v, margin = marginOfSafe(it.costText, v))
-    }
-
-    fun setInitialStock(v: String) = edit {
-        it.copy(initialStockText = v.filter(Char::isDigit))
-    }
-
-    fun setThreshold(v: String) = edit {
-        it.copy(thresholdText = v.filter(Char::isDigit).take(4))
-    }
-
     private fun edit(block: (ProductEditUiState) -> ProductEditUiState) = _state.update(block)
 
     private fun marginOfSafe(costText: String, priceText: String): MarginPreview? = try {
@@ -185,7 +212,7 @@ class ProductEditViewModel @Inject constructor(
 
     // ─── Save ────────────────────────────────────────────────────────────────
 
-    fun save() {
+    private fun save() {
         val current = _state.value
         if (current.saving || current.denied) return
         if (current.name.isBlank()) {

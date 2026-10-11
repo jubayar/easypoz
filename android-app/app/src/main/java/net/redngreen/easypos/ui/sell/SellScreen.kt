@@ -74,7 +74,7 @@ import net.redngreen.easypos.R
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.core.print.PrintState
 import net.redngreen.easypos.designsystem.ExtendedTheme
-import net.redngreen.easypos.ui.catalog.ProductTile
+import net.redngreen.easypos.designsystem.ProductTile
 
 private val HELD_TIME = DateTimeFormatter.ofPattern("HH:mm")
 

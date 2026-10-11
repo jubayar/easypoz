@@ -25,7 +25,7 @@
 
 - [x] 4.1 `feature/login`: merge session + lock screens into one feature; PIN-verify use case over `core/session` + `core/security`; Root/Screen split; State/Action/Event; `<feature>UiModule`/`<feature>DataModule`; lock semantics unchanged
 - [x] 4.2 `feature/onboarding`: wizard as MVI reducer with `SavedStateHandle` survival; `TenantConfigRepository` interface + impl in domain/data (per D2 ownership)
-- [ ] 4.3 `feature/catalog`: `CatalogRepository` domain interface + data impl over `core/database` DAOs; CSV parser + DTOs + mappers in `data/`; products/categories/product-edit screens to Root/Screen + State/Action/Event
+- [x] 4.3 `feature/catalog`: `CatalogRepository` domain interface + data impl over `core/database` DAOs; CSV parser + DTOs + mappers in `data/`; products/categories/product-edit screens to Root/Screen + State/Action/Event
 - [ ] 4.4 `feature/sell` domain + data: cart/checkout use cases, `SaleRepository`, `HeldSale`, `ReceiptRepository`, payment selection; Result-based signatures (D8); Koin data module
 - [ ] 4.5 `feature/sell` ui: `SellScreen`/`PaymentSheet`/`QuickEdit` Root/Screen split; MVI reducer; `koinViewModel()`; cart survives process death; sell-path stays Room-read-only (no network/sync on scan→cart)
 - [ ] 4.6 `feature/stock`: `StockRepository` domain + data; stock screen + adjustment flow to Root/Screen pattern

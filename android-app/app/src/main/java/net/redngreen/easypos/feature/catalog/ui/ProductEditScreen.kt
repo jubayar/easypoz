@@ -1,4 +1,4 @@
-package net.redngreen.easypos.ui.catalog
+package net.redngreen.easypos.feature.catalog.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,12 +49,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.feature.catalog.domain.Product
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.designsystem.ExtendedTheme
+import net.redngreen.easypos.designsystem.ProductTile
+import net.redngreen.easypos.feature.catalog.domain.Category
+import net.redngreen.easypos.feature.catalog.domain.Product
+import org.koin.androidx.compose.koinViewModel
 
 private val QUICK_EMOJIS = listOf("🥛", "🍞", "🥤", "🍜", "🧴", "🧹", "🍫", "☕")
 
@@ -64,18 +66,34 @@ private val QUICK_EMOJIS = listOf("🥛", "🍞", "🥤", "🍜", "🧴", "🧹"
  * Stock & Terminal Visibility (threshold stepper, on-hand, sellable toggle),
  * and a live sell-tile preview. Emoji quick-picker over the free-text field.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductEditScreen(
+fun ProductEditRoot(
     productId: String?,
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
     prefillBarcode: String? = null,
-    viewModel: ProductEditViewModel = hiltViewModel(),
+    viewModel: ProductEditViewModel = koinViewModel(),
 ) {
+    LaunchedEffect(productId, prefillBarcode) {
+        viewModel.onAction(ProductEditAction.Load(productId, prefillBarcode))
+    }
     val state by viewModel.state.collectAsStateWithLifecycle()
+    ProductEditScreen(
+        state = state,
+        onAction = viewModel::onAction,
+        onDone = onDone,
+        modifier = modifier,
+    )
+}
 
-    LaunchedEffect(productId, prefillBarcode) { viewModel.load(productId, prefillBarcode) }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProductEditScreen(
+    state: ProductEditUiState,
+    onAction: (ProductEditAction) -> Unit,
+    onDone: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     LaunchedEffect(state.saved) { if (state.saved) onDone() }
 
     Scaffold(
@@ -125,7 +143,7 @@ fun ProductEditScreen(
                     SectionCard(title = stringResource(R.string.product_section_identity)) {
                         OutlinedTextField(
                             value = state.name,
-                            onValueChange = viewModel::setName,
+                            onValueChange = { onAction(ProductEditAction.SetName(it)) },
                             label = { Text(stringResource(R.string.user_name_label)) },
                             singleLine = true,
                             isError = state.error == ProductEditError.INVALID_NAME,
@@ -133,7 +151,7 @@ fun ProductEditScreen(
                         )
                         OutlinedTextField(
                             value = state.barcode,
-                            onValueChange = viewModel::setBarcode,
+                            onValueChange = { onAction(ProductEditAction.SetBarcode(it)) },
                             label = { Text(stringResource(R.string.product_barcode_label)) },
                             singleLine = true,
                             isError = state.error == ProductEditError.BARCODE_TAKEN,
@@ -153,12 +171,12 @@ fun ProductEditScreen(
                             CategoryDropdown(
                                 categories = state.categories,
                                 selectedId = state.categoryId,
-                                onSelect = viewModel::setCategoryId,
+                                onSelect = { onAction(ProductEditAction.SetCategoryId(it)) },
                                 modifier = Modifier.weight(1f),
                             )
                             OutlinedTextField(
                                 value = state.sku,
-                                onValueChange = viewModel::setSku,
+                                onValueChange = { onAction(ProductEditAction.SetSku(it)) },
                                 label = { Text(stringResource(R.string.product_sku_label)) },
                                 singleLine = true,
                                 modifier = Modifier.weight(1f),
@@ -166,9 +184,8 @@ fun ProductEditScreen(
                         }
                         OutlinedTextField(
                             value = state.location,
-                            onValueChange = viewModel::setLocation,
+                            onValueChange = { onAction(ProductEditAction.SetLocation(it)) },
                             label = { Text(stringResource(R.string.product_location_label)) },
-                            singleLine = true,
                             supportingText = { Text(stringResource(R.string.product_location_hint)) },
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -178,7 +195,7 @@ fun ProductEditScreen(
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             OutlinedTextField(
                                 value = state.costText,
-                                onValueChange = viewModel::setCost,
+                                onValueChange = { onAction(ProductEditAction.SetCost(it)) },
                                 label = { Text(stringResource(R.string.product_cost_label)) },
                                 prefix = { Text("RM ") },
                                 singleLine = true,
@@ -188,7 +205,7 @@ fun ProductEditScreen(
                             )
                             OutlinedTextField(
                                 value = state.priceText,
-                                onValueChange = viewModel::setPrice,
+                                onValueChange = { onAction(ProductEditAction.SetPrice(it)) },
                                 label = { Text(stringResource(R.string.product_price_label)) },
                                 prefix = { Text("RM ") },
                                 singleLine = true,
@@ -239,7 +256,7 @@ fun ProductEditScreen(
                         if (state.isNew) {
                             OutlinedTextField(
                                 value = state.initialStockText,
-                                onValueChange = viewModel::setInitialStock,
+                                onValueChange = { onAction(ProductEditAction.SetInitialStock(it)) },
                                 label = { Text(stringResource(R.string.product_initial_stock_label)) },
                                 singleLine = true,
                                 isError = state.error == ProductEditError.INVALID_STOCK,
@@ -270,7 +287,13 @@ fun ProductEditScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             FilledTonalIconButton(
-                                onClick = { viewModel.setThreshold(((state.thresholdText.toIntOrNull() ?: 0) - 1).coerceAtLeast(0).toString()) },
+                                onClick = {
+                                    onAction(
+                                        ProductEditAction.SetThreshold(
+                                            ((state.thresholdText.toIntOrNull() ?: 0) - 1).coerceAtLeast(0).toString()
+                                        )
+                                    )
+                                },
                                 modifier = Modifier.size(40.dp),
                             ) { Text("−", style = MaterialTheme.typography.titleLarge) }
                             Text(
@@ -281,7 +304,11 @@ fun ProductEditScreen(
                                 style = MaterialTheme.typography.titleMedium,
                             )
                             FilledTonalIconButton(
-                                onClick = { viewModel.setThreshold(((state.thresholdText.toIntOrNull() ?: 0) + 1).toString()) },
+                                onClick = {
+                                    onAction(
+                                        ProductEditAction.SetThreshold(((state.thresholdText.toIntOrNull() ?: 0) + 1).toString())
+                                    )
+                                },
                                 modifier = Modifier.size(40.dp),
                             ) { Icon(Icons.Filled.AddCircle, contentDescription = null) }
                         }
@@ -292,7 +319,10 @@ fun ProductEditScreen(
                         )
                         if (!state.isNew) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Switch(checked = state.active, onCheckedChange = viewModel::setActive)
+                                Switch(
+                                    checked = state.active,
+                                    onCheckedChange = { onAction(ProductEditAction.SetActive(it)) },
+                                )
                                 Text(
                                     stringResource(
                                         if (state.active) R.string.product_active_sellable
@@ -325,7 +355,7 @@ fun ProductEditScreen(
                             Text(stringResource(R.string.lock_cancel))
                         }
                         Button(
-                            onClick = viewModel::save,
+                            onClick = { onAction(ProductEditAction.Save) },
                             enabled = !state.saving && state.name.isNotBlank() && state.priceText.isNotBlank(),
                             modifier = Modifier.weight(1f).height(52.dp),
                         ) {
@@ -352,7 +382,7 @@ fun ProductEditScreen(
                                     shape = RoundedCornerShape(10.dp),
                                     color = if (state.emoji == emoji) MaterialTheme.colorScheme.primaryContainer
                                     else MaterialTheme.colorScheme.surfaceContainerLow,
-                                    onClick = { viewModel.setEmoji(emoji) },
+                                    onClick = { onAction(ProductEditAction.SetEmoji(emoji)) },
                                 ) {
                                     Text(
                                         text = emoji,
@@ -364,7 +394,7 @@ fun ProductEditScreen(
                         }
                         OutlinedTextField(
                             value = state.emoji,
-                            onValueChange = viewModel::setEmoji,
+                            onValueChange = { onAction(ProductEditAction.SetEmoji(it)) },
                             label = { Text(stringResource(R.string.product_emoji_label)) },
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(0.5f),
@@ -419,7 +449,7 @@ private fun SectionCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryDropdown(
-    categories: List<net.redngreen.easypos.feature.catalog.domain.Category>,
+    categories: List<Category>,
     selectedId: String?,
     onSelect: (String?) -> Unit,
     modifier: Modifier = Modifier,
