@@ -11,11 +11,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.redngreen.easypos.core.database.dao.CategoryDao
-import net.redngreen.easypos.core.database.dao.ProductDao
 import net.redngreen.easypos.core.database.dao.UserDao
-import net.redngreen.easypos.core.database.entity.Product
-import net.redngreen.easypos.core.data.repo.CatalogRepository
-import net.redngreen.easypos.core.data.repo.CatalogRepository.ProductFields
+import net.redngreen.easypos.feature.catalog.domain.Product
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.ProductFields
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role
 import net.redngreen.easypos.core.security.PinHasher
@@ -47,7 +46,6 @@ data class QuickEditUiState(
 class QuickEditViewModel @Inject constructor(
     private val session: SessionManager,
     private val userDao: UserDao,
-    private val productDao: ProductDao,
     private val categoryDao: CategoryDao,
     private val catalog: CatalogRepository,
     private val pinHasher: PinHasher,
@@ -59,7 +57,7 @@ class QuickEditViewModel @Inject constructor(
     fun load(productId: String) {
         _state.value = QuickEditUiState(loading = true)
         viewModelScope.launch {
-            val product = productDao.getById(productId)
+            val product = catalog.getProduct(productId)
             if (product == null) {
                 _state.update { it.copy(loading = false, saved = true) }
                 return@launch

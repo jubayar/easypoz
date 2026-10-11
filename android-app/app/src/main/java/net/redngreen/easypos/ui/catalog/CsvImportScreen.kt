@@ -35,7 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.data.repo.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.ImportStatus
 import net.redngreen.easypos.ui.catalog.CsvImportViewModel.UiState
 
 /**
@@ -183,7 +184,7 @@ fun CsvImportScreen(
                         ) {
                             items(summary.outcomes.size) { index ->
                                 val outcome = summary.outcomes[index]
-                                if (outcome.status == CatalogRepository.ImportStatus.FAILED) {
+                                if (outcome.status == ImportStatus.FAILED) {
                                     Card(Modifier.fillMaxWidth()) {
                                         Column(Modifier.padding(8.dp)) {
                                             Row(verticalAlignment = Alignment.CenterVertically) {

@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.database.entity.Product
+import net.redngreen.easypos.feature.catalog.domain.Product
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.designsystem.ExtendedTheme
 
@@ -419,7 +419,7 @@ private fun SectionCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryDropdown(
-    categories: List<net.redngreen.easypos.core.database.entity.Category>,
+    categories: List<net.redngreen.easypos.feature.catalog.domain.Category>,
     selectedId: String?,
     onSelect: (String?) -> Unit,
     modifier: Modifier = Modifier,

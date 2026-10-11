@@ -21,7 +21,6 @@ import net.redngreen.easypos.core.print.PrintController
 import net.redngreen.easypos.core.security.PinHasher
 import net.redngreen.easypos.core.session.SessionManager
 import net.redngreen.easypos.core.data.repo.BackupRepository
-import net.redngreen.easypos.core.data.repo.CatalogRepository
 import net.redngreen.easypos.core.data.repo.CashRepository
 import net.redngreen.easypos.core.data.repo.PaymentTypeRepository
 import net.redngreen.easypos.core.data.repo.ReceiptRepository
@@ -113,7 +112,6 @@ val printModule = module {
  * feature data layers. Entries disappear from here as features adopt them.
  */
 val bridgeRepoModule = module {
-    singleOf(::CatalogRepository)
     singleOf(::SaleRepository)
     singleOf(::StockRepository)
     singleOf(::CashRepository)

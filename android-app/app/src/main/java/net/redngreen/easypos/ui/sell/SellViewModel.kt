@@ -14,13 +14,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.redngreen.easypos.core.database.SettingsKeys
-import net.redngreen.easypos.core.database.dao.ProductDao
 import net.redngreen.easypos.core.database.dao.SettingDao
-import net.redngreen.easypos.core.database.entity.Category
+import net.redngreen.easypos.feature.catalog.domain.Category
 import net.redngreen.easypos.core.database.entity.HeldSale
 import net.redngreen.easypos.core.database.entity.PaymentType
-import net.redngreen.easypos.core.database.entity.Product
-import net.redngreen.easypos.core.data.repo.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.Product
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
 import net.redngreen.easypos.core.data.repo.SaleRepository
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.core.session.SessionManager
@@ -85,7 +84,6 @@ data class SellUiState(
 @HiltViewModel
 class SellViewModel @Inject constructor(
     private val session: SessionManager,
-    private val productDao: ProductDao,
     private val catalog: CatalogRepository,
     private val sales: SaleRepository,
     settingDao: SettingDao,
@@ -192,12 +190,12 @@ class SellViewModel @Inject constructor(
         val code = query.value.trim()
         if (code.isEmpty()) return
         viewModelScope.launch {
-            val product = productDao.getActiveByBarcode(code)
+            val product = catalog.findActiveByBarcode(code)
             if (product != null) {
                 addToCart(product)
                 query.value = ""
                 unknownBarcode.value = null
-            } else if (productDao.search(code, 1).isEmpty()) {
+            } else if (catalog.searchMatching(code, 1).isEmpty()) {
                 // Neither exact nor partial — offer create/quick-sell, keep the code.
                 unknownBarcode.value = code
             }

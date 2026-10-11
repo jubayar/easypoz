@@ -1,8 +1,9 @@
-package net.redngreen.easypos.core.csv
+package net.redngreen.easypos.feature.catalog.data
 
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import net.redngreen.easypos.core.money.MoneyFormatter
+import net.redngreen.easypos.feature.catalog.domain.CatalogCsvRow
 
 /**
  * Tolerant product-CSV parser per `docs/csv-import-format.md`:
@@ -15,28 +16,13 @@ import net.redngreen.easypos.core.money.MoneyFormatter
  */
 object CsvCatalogParser {
 
-    /** A successfully parsed data row (1-based data-row number, header excluded). */
-    data class Row(
-        val rowNumber: Int,
-        val name: String,
-        val barcode: String?,
-        val sku: String?,
-        val category: String,
-        val costCents: Long,
-        val priceCents: Long,
-        val active: Boolean,
-        /** null = leave stock unchanged (docs: blank → unchanged). */
-        val stock: Long?,
-        val location: String?,
-    )
-
     data class RowFailure(
         val rowNumber: Int,
         val reason: String,
     )
 
     data class Result(
-        val rows: List<Row>,
+        val rows: List<CatalogCsvRow>,
         val failures: List<RowFailure>,
     ) {
         val okCount: Int get() = rows.size
@@ -87,7 +73,7 @@ object CsvCatalogParser {
         val stockIdx = col("stock")
         val locationIdx = col("location")
 
-        val rows = mutableListOf<Row>()
+        val rows = mutableListOf<CatalogCsvRow>()
         val failures = mutableListOf<RowFailure>()
 
         records.drop(1).forEachIndexed { index, record ->
@@ -149,7 +135,7 @@ object CsvCatalogParser {
                 null
             }
 
-            rows += Row(
+            rows += CatalogCsvRow(
                 rowNumber = rowNumber,
                 name = name,
                 barcode = cell(barcodeIdx).ifEmpty { null },

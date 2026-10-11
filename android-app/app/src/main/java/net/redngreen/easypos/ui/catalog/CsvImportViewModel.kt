@@ -9,8 +9,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.csv.CsvCatalogParser
-import net.redngreen.easypos.core.data.repo.CatalogRepository
+import net.redngreen.easypos.feature.catalog.data.CsvCatalogParser
+import net.redngreen.easypos.feature.catalog.domain.CatalogCsvRow
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.ImportStatus
+import net.redngreen.easypos.feature.catalog.domain.ImportSummary
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.session.SessionManager
 
@@ -27,7 +30,7 @@ class CsvImportViewModel @Inject constructor(
 
     /** Parse-level failures shown before import; DB failures land in summary. */
     data class Parsed(
-        val rows: List<CsvCatalogParser.Row>,
+        val rows: List<CatalogCsvRow>,
         val failures: List<CsvCatalogParser.RowFailure>,
     )
 
@@ -36,7 +39,7 @@ class CsvImportViewModel @Inject constructor(
         data object Parsing : UiState
         data class Ready(val parsed: Parsed) : UiState
         data object Importing : UiState
-        data class Done(val summary: CatalogRepository.ImportSummary) : UiState
+        data class Done(val summary: ImportSummary) : UiState
         data class Error(val message: String) : UiState
     }
 
@@ -44,7 +47,7 @@ class CsvImportViewModel @Inject constructor(
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     /** The last successfully parsed rows, kept for failed-row retry. */
-    private var lastParsedRows: List<CsvCatalogParser.Row> = emptyList()
+    private var lastParsedRows: List<CatalogCsvRow> = emptyList()
 
     private var gated = false
     private var allowed = false
@@ -82,7 +85,7 @@ class CsvImportViewModel @Inject constructor(
     fun retryFailed() {
         val done = _state.value as? UiState.Done ?: return
         val failedNumbers = done.summary.outcomes
-            .filter { it.status == CatalogRepository.ImportStatus.FAILED }
+            .filter { it.status == ImportStatus.FAILED }
             .map { it.rowNumber }
             .toSet()
         val retryRows = lastParsedRows.filter { it.rowNumber in failedNumbers }
@@ -90,7 +93,7 @@ class CsvImportViewModel @Inject constructor(
         applyRows(retryRows)
     }
 
-    private fun applyRows(rows: List<CsvCatalogParser.Row>) {
+    private fun applyRows(rows: List<CatalogCsvRow>) {
         _state.value = UiState.Importing
         viewModelScope.launch {
             val summary = catalog.importRows(rows, session.activeUserId.value)

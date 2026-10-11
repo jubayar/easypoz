@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.redngreen.easypos.core.database.SettingsKeys
-import net.redngreen.easypos.core.data.repo.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.ProductFields
 import net.redngreen.easypos.core.data.repo.SettingsRepository
 import net.redngreen.easypos.core.data.repo.TenantConfigRepository
 import net.redngreen.easypos.core.model.Permission
@@ -87,7 +88,7 @@ class SettingsOnboardingRepository(
 
     override suspend fun addStarterProduct(name: String, priceCents: Long) {
         catalog.createProduct(
-            fields = CatalogRepository.ProductFields(
+            fields = ProductFields(
                 name = name.trim(),
                 categoryId = null,
                 barcode = null,

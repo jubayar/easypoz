@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import net.redngreen.easypos.core.database.entity.Category
-import net.redngreen.easypos.core.database.entity.Product
-import net.redngreen.easypos.core.data.repo.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.Category
+import net.redngreen.easypos.feature.catalog.domain.Product
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.session.SessionManager
 

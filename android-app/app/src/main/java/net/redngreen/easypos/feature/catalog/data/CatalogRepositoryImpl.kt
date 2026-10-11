@@ -1,66 +1,72 @@
-package net.redngreen.easypos.core.data.repo
+package net.redngreen.easypos.feature.catalog.data
 
 import java.util.UUID
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import net.redngreen.easypos.core.database.LocalIdentity
 import net.redngreen.easypos.core.database.dao.CategoryDao
 import net.redngreen.easypos.core.database.dao.ProductDao
 import net.redngreen.easypos.core.database.dao.StockDeltaDao
-import net.redngreen.easypos.core.database.entity.Category
-import net.redngreen.easypos.core.database.entity.Product
+import net.redngreen.easypos.core.database.entity.Category as CategoryEntity
+import net.redngreen.easypos.core.database.entity.Product as ProductEntity
 import net.redngreen.easypos.core.database.entity.StockDelta
 import net.redngreen.easypos.core.database.journal.JournalEntities
 import net.redngreen.easypos.core.database.journal.JournalizedWriter
 import net.redngreen.easypos.core.database.journal.categoryPayload
 import net.redngreen.easypos.core.database.journal.productPayload
 import net.redngreen.easypos.core.database.journal.stockDeltaPayload
-import net.redngreen.easypos.core.csv.CsvCatalogParser
 import net.redngreen.easypos.core.money.MoneyFormatter
+import net.redngreen.easypos.feature.catalog.domain.CatalogCsvRow
+import net.redngreen.easypos.feature.catalog.domain.CatalogError
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.Category
+import net.redngreen.easypos.feature.catalog.domain.ImportOutcome
+import net.redngreen.easypos.feature.catalog.domain.ImportStatus
+import net.redngreen.easypos.feature.catalog.domain.ImportSummary
+import net.redngreen.easypos.feature.catalog.domain.Product
+import net.redngreen.easypos.feature.catalog.domain.ProductFields
 
 /**
  * Product & category mutations (tasks 6.1–6.5). Everything synced goes
  * through JournalizedWriter — one transaction per logical change, compound
- * changes (product + stock delta) share one transaction. Role enforcement
- * (EDIT_CATALOG) is checked by callers via SessionManager; this repo guards
- * data integrity: barcode uniqueness, non-blank names, valid money.
+ * changes (product + stock delta) share one transaction. Room entities stay
+ * inside this class; the domain sees mapped models only (design D5).
  */
-@Singleton
-class CatalogRepository @Inject constructor(
+class CatalogRepositoryImpl @Inject constructor(
     private val productDao: ProductDao,
     private val categoryDao: CategoryDao,
     private val stockDeltaDao: StockDeltaDao,
     private val identity: LocalIdentity,
     private val writer: JournalizedWriter,
-) {
+) : CatalogRepository {
+
     // ─── Observers ───────────────────────────────────────────────────────────
 
-    fun observeProducts(): Flow<List<Product>> = productDao.observeAll()
+    override fun observeProducts(): Flow<List<Product>> =
+        productDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    fun observeCategories(): Flow<List<Category>> = categoryDao.observeAll()
+    override fun observeCategories(): Flow<List<Category>> =
+        categoryDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    fun observeProductsByCategory(categoryId: String?): Flow<List<Product>> =
-        productDao.observeActiveByCategory(categoryId)
+    override suspend fun findActiveByBarcode(barcode: String): Product? =
+        productDao.getActiveByBarcode(barcode)?.toDomain()
 
-    // ─── Errors ──────────────────────────────────────────────────────────────
+    override suspend fun searchMatching(query: String, limit: Int): List<Product> =
+        productDao.search(query, limit).map { it.toDomain() }
 
-    sealed class CatalogError(message: String) : Exception(message) {
-        class InvalidName : CatalogError("name must not be blank")
-        class InvalidPrice : CatalogError("sale price must be a positive amount")
-        class BarcodeTaken(val otherName: String) :
-            CatalogError("barcode already used by $otherName")
-    }
+    override suspend fun getProduct(id: String): Product? =
+        productDao.getById(id)?.toDomain()
 
     // ─── Categories (task 6.1) ───────────────────────────────────────────────
 
     /** Creates a category (fails on duplicate name) or returns the existing one. */
-    suspend fun ensureCategory(name: String, actorUserId: String?): Category {
+    override suspend fun ensureCategory(name: String, actorUserId: String?): Category {
         val trimmed = name.trim()
         if (trimmed.isEmpty()) throw CatalogError.InvalidName()
-        categoryDao.getByName(trimmed)?.let { return it }
+        categoryDao.getByName(trimmed)?.let { return it.toDomain() }
         val now = System.currentTimeMillis()
-        val category = Category(
+        val category = CategoryEntity(
             id = UUID.randomUUID().toString(),
             shopId = identity.shopId(),
             name = trimmed,
@@ -73,16 +79,14 @@ class CatalogRepository @Inject constructor(
             entity = JournalEntities.CATEGORY,
             opType = JournalEntities.UPSERT,
             actorUserId = actorUserId,
-            payloadJson = writer.encode(
-                categoryPayload(category)
-            ),
+            payloadJson = writer.encode(categoryPayload(category)),
         ) {
             categoryDao.upsert(category)
         }
-        return category
+        return category.toDomain()
     }
 
-    suspend fun renameCategory(id: String, newName: String, actorUserId: String?) {
+    override suspend fun renameCategory(id: String, newName: String, actorUserId: String?) {
         val trimmed = newName.trim()
         if (trimmed.isEmpty()) throw CatalogError.InvalidName()
         val existing = categoryDao.getById(id) ?: return
@@ -97,16 +101,14 @@ class CatalogRepository @Inject constructor(
             entity = JournalEntities.CATEGORY,
             opType = JournalEntities.UPSERT,
             actorUserId = actorUserId,
-            payloadJson = writer.encode(
-                categoryPayload(updated)
-            ),
+            payloadJson = writer.encode(categoryPayload(updated)),
         ) {
             categoryDao.upsert(updated)
         }
     }
 
     /** Reorder: assigns sortOrder by list position; journals changed rows. */
-    suspend fun reorderCategories(orderedIds: List<String>, actorUserId: String?) {
+    override suspend fun reorderCategories(orderedIds: List<String>, actorUserId: String?) {
         val now = System.currentTimeMillis()
         orderedIds.forEachIndexed { index, id ->
             val category = categoryDao.getById(id) ?: return@forEachIndexed
@@ -118,9 +120,7 @@ class CatalogRepository @Inject constructor(
                     entity = JournalEntities.CATEGORY,
                     opType = JournalEntities.UPSERT,
                     actorUserId = actorUserId,
-                    payloadJson = writer.encode(
-                        categoryPayload(updated)
-                    ),
+                    payloadJson = writer.encode(categoryPayload(updated)),
                 ) {
                     categoryDao.upsert(updated)
                 }
@@ -133,24 +133,8 @@ class CatalogRepository @Inject constructor(
 
     // ─── Products (task 6.2) ─────────────────────────────────────────────────
 
-    data class ProductFields(
-        val name: String,
-        val categoryId: String?,
-        val barcode: String?,
-        val sku: String?,
-        val costCents: Long,
-        val priceCents: Long,
-        val taxRateBps: Int? = null,
-        val active: Boolean = true,
-        val lowStockThreshold: Int = 5,
-        val emoji: String? = null,
-        val color: String? = null,
-        val photo: String? = null,
-        val location: String? = null,
-    )
-
     /** Creates a product; initial stock (when given) is journaled as ADJUST. */
-    suspend fun createProduct(
+    override suspend fun createProduct(
         fields: ProductFields,
         initialStock: Long?,
         actorUserId: String?,
@@ -161,7 +145,7 @@ class CatalogRepository @Inject constructor(
         validateBarcodeFree(fields.barcode, exceptId = null)
 
         val now = System.currentTimeMillis()
-        val product = Product(
+        val product = ProductEntity(
             id = UUID.randomUUID().toString(),
             shopId = identity.shopId(),
             categoryId = fields.categoryId,
@@ -182,10 +166,10 @@ class CatalogRepository @Inject constructor(
             updatedAt = now,
         )
         writeProductWithOptionalStock(product, initialStock, previousStock = 0L, actorUserId)
-        return product
+        return product.toDomain()
     }
 
-    suspend fun updateProduct(
+    override suspend fun updateProduct(
         id: String,
         fields: ProductFields,
         actorUserId: String?,
@@ -216,7 +200,7 @@ class CatalogRepository @Inject constructor(
     }
 
     /** Soft-deactivate — historical sales stay intact (spec). */
-    suspend fun deactivateProduct(id: String, actorUserId: String?) {
+    override suspend fun deactivateProduct(id: String, actorUserId: String?) {
         val existing = productDao.getById(id) ?: return
         if (!existing.active) return
         val updated = existing.copy(active = false, updatedAt = System.currentTimeMillis())
@@ -232,7 +216,7 @@ class CatalogRepository @Inject constructor(
     }
 
     private suspend fun writeProductWithOptionalStock(
-        product: Product,
+        product: ProductEntity,
         initialStock: Long?,
         previousStock: Long,
         actorUserId: String?,
@@ -273,7 +257,7 @@ class CatalogRepository @Inject constructor(
         }
     }
 
-    private suspend fun writeJournalizedProduct(product: Product, actorUserId: String?) {
+    private suspend fun writeJournalizedProduct(product: ProductEntity, actorUserId: String?) {
         writer.journalized(
             shopId = identity.shopId(),
             deviceId = identity.deviceId(),
@@ -288,32 +272,19 @@ class CatalogRepository @Inject constructor(
 
     // ─── CSV import (task 6.4) ───────────────────────────────────────────────
 
-    enum class ImportStatus { CREATED, UPDATED, FAILED }
-
-    data class ImportOutcome(
-        val rowNumber: Int,
-        val productName: String,
-        val status: ImportStatus,
-        val reason: String? = null,
-    )
-
-    data class ImportSummary(
-        val created: Int,
-        val updated: Int,
-        val failed: Int,
-        val outcomes: List<ImportOutcome>,
-    )
-
     /**
      * Applies parsed rows per docs update semantics: barcode match, else
      * blank-barcode + exact name&category match, else create. Categories are
      * auto-created; stock is set via an ADJUST delta; duplicate barcodes
      * (in-file or in-DB) fail their row naming the conflict.
      */
-    suspend fun importRows(rows: List<CsvCatalogParser.Row>, actorUserId: String?): ImportSummary {
+    override suspend fun importRows(
+        rows: List<CatalogCsvRow>,
+        actorUserId: String?,
+    ): ImportSummary {
         val outcomes = mutableListOf<ImportOutcome>()
         val seenBarcodes = mutableMapOf<String, Pair<Int, String>>() // barcode → (row, name)
-        val categoryCache = mutableMapOf<String, Category>()
+        val categoryCache = mutableMapOf<String, CategoryEntity>()
 
         for (row in rows) {
             val outcome = importRow(row, actorUserId, seenBarcodes, categoryCache)
@@ -328,10 +299,10 @@ class CatalogRepository @Inject constructor(
     }
 
     private suspend fun importRow(
-        row: CsvCatalogParser.Row,
+        row: CatalogCsvRow,
         actorUserId: String?,
         seenBarcodes: MutableMap<String, Pair<Int, String>>,
-        categoryCache: MutableMap<String, Category>,
+        categoryCache: MutableMap<String, CategoryEntity>,
     ): ImportOutcome? {
         suspend fun fail(reason: String) = ImportOutcome(row.rowNumber, row.name, ImportStatus.FAILED, reason)
 
@@ -343,10 +314,15 @@ class CatalogRepository @Inject constructor(
         }
 
         // Category (auto-created, cached).
-        val category = categoryCache[row.category] ?: run {
+        val category: CategoryEntity = categoryCache[row.category] ?: run {
             val resolved = ensureCategory(row.category, actorUserId)
-            categoryCache[row.category] = resolved
-            resolved
+            CategoryEntity(
+                id = resolved.id,
+                shopId = resolved.shopId,
+                name = resolved.name,
+                sortOrder = resolved.sortOrder,
+                updatedAt = resolved.updatedAt,
+            ).also { categoryCache[row.category] = it }
         }
 
         // Existing-product resolution.
@@ -402,7 +378,7 @@ class CatalogRepository @Inject constructor(
 
     /** CSV stock set: product upsert + ADJUST delta in one transaction. */
     private suspend fun setStock(
-        existing: Product,
+        existing: ProductEntity,
         newStock: Long,
         actorUserId: String?,
         fields: ProductFields,
@@ -457,7 +433,7 @@ class CatalogRepository @Inject constructor(
     // ─── CSV export (task 6.5) ───────────────────────────────────────────────
 
     /** Full catalog (inactive included) in the canonical import format. */
-    suspend fun exportCsv(): String {
+    override suspend fun exportCsv(): String {
         val products = productDao.getAll()
         val categoriesById = categoryDao.getAll().associateBy { it.id }
         val sb = StringBuilder()
@@ -487,6 +463,37 @@ class CatalogRepository @Inject constructor(
         } else {
             value
         }
+
+    // ─── Mappers (entity ↔ domain, design D5) ────────────────────────────────
+
+    private fun ProductEntity.toDomain() = Product(
+        id = id,
+        shopId = shopId,
+        categoryId = categoryId,
+        name = name,
+        barcode = barcode,
+        sku = sku,
+        costCents = costCents,
+        priceCents = priceCents,
+        taxRateBps = taxRateBps,
+        active = active,
+        lowStockThreshold = lowStockThreshold,
+        emoji = emoji,
+        color = color,
+        photo = photo,
+        location = location,
+        stockOnHand = stockOnHand,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+
+    private fun CategoryEntity.toDomain() = Category(
+        id = id,
+        shopId = shopId,
+        name = name,
+        sortOrder = sortOrder,
+        updatedAt = updatedAt,
+    )
 
     companion object {
         const val REASON_ADJUST = "ADJUST"

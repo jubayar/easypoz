@@ -1,4 +1,4 @@
-package net.redngreen.easypos.core.csv
+package net.redngreen.easypos.feature.catalog.data
 
 import java.nio.charset.StandardCharsets
 import org.junit.Assert.assertEquals

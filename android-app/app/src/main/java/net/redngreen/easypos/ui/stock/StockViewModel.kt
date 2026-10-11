@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import net.redngreen.easypos.core.database.dao.UserDao
-import net.redngreen.easypos.core.database.entity.Category
+import net.redngreen.easypos.feature.catalog.domain.Category
 import net.redngreen.easypos.core.database.entity.Product
 import net.redngreen.easypos.core.database.entity.StockDelta
 import net.redngreen.easypos.core.database.entity.User
-import net.redngreen.easypos.core.data.repo.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
 import net.redngreen.easypos.core.data.repo.StockRepository
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role

@@ -12,9 +12,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.database.entity.Category
-import net.redngreen.easypos.core.database.entity.Product
-import net.redngreen.easypos.core.data.repo.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.CatalogError
+import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
+import net.redngreen.easypos.feature.catalog.domain.ProductFields
+import net.redngreen.easypos.feature.catalog.domain.Category
+import net.redngreen.easypos.feature.catalog.domain.Product
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.core.session.SessionManager
@@ -215,7 +217,7 @@ class ProductEditViewModel @Inject constructor(
             }
 
             try {
-                val fields = CatalogRepository.ProductFields(
+                val fields = ProductFields(
                     name = current.name,
                     categoryId = current.categoryId,
                     barcode = current.barcode.trim().ifEmpty { null },
@@ -237,7 +239,7 @@ class ProductEditViewModel @Inject constructor(
                     detail = "name=${current.name.trim()}",
                 )
                 _state.update { it.copy(saving = false, saved = true) }
-            } catch (e: CatalogRepository.CatalogError.BarcodeTaken) {
+            } catch (e: CatalogError.BarcodeTaken) {
                 fail(ProductEditError.BARCODE_TAKEN, e.message)
             } catch (e: Exception) {
                 fail(ProductEditError.UNKNOWN, e.message)

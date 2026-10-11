@@ -14,6 +14,7 @@ import net.redngreen.easypos.core.di.syncModule
 import net.redngreen.easypos.core.network.TokenStore
 import net.redngreen.easypos.core.sync.SyncScheduler
 import net.redngreen.easypos.core.sync.SyncStatusRepository
+import net.redngreen.easypos.feature.catalog.data.di.catalogDataModule
 import net.redngreen.easypos.feature.login.data.di.loginDataModule
 import net.redngreen.easypos.feature.login.ui.di.loginUiModule
 import net.redngreen.easypos.feature.onboarding.data.di.onboardingDataModule
@@ -43,6 +44,7 @@ class EasyPosApp : Application() {
                 sessionModule,
                 printModule,
                 bridgeRepoModule,
+                catalogDataModule,
                 loginDataModule,
                 loginUiModule,
                 onboardingDataModule,
