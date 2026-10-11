@@ -28,9 +28,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role
-import net.redngreen.easypos.ui.lock.roleLabel
+import net.redngreen.easypos.designsystem.roleLabel
+import net.redngreen.easypos.feature.login.ui.LoginViewModel
+import net.redngreen.easypos.feature.login.ui.model.LoginAction
 import net.redngreen.easypos.ui.sell.SellScreen
-import net.redngreen.easypos.ui.session.SessionViewModel
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * The main screen: identity strip on top (badge, switch/lock, entry points),
@@ -49,9 +51,10 @@ fun MainScreen(
   onOpenActivityLog: () -> Unit = {},
   onOpenHistory: () -> Unit = {},
   onCreateProductForBarcode: (String) -> Unit = {},
-  sessionViewModel: SessionViewModel = hiltViewModel(),
+  loginViewModel: LoginViewModel = koinViewModel(),
 ) {
-  val activeUser by sessionViewModel.activeUser.collectAsStateWithLifecycle()
+  val loginState by loginViewModel.state.collectAsStateWithLifecycle()
+  val activeUser = loginState.activeUser
   val role = activeUser?.role?.let { Role.fromName(it) }
   val canViewStock = role?.can(Permission.VIEW_STOCK) == true
   val canViewCash = role?.can(Permission.VIEW_ALL_CASH) == true || role?.can(Permission.VIEW_OWN_CASH) == true
@@ -65,8 +68,8 @@ fun MainScreen(
       canEditCatalog = role?.can(Permission.EDIT_CATALOG) == true,
       canManageUsers = role?.can(Permission.MANAGE_USERS) == true,
       canManageSettings = role?.can(Permission.MANAGE_SETTINGS) == true,
-      onSwitchUser = { sessionViewModel.lockNow("switch user") },
-      onLock = { sessionViewModel.lockNow("manual") },
+      onSwitchUser = { loginViewModel.onAction(LoginAction.LockNow("switch user")) },
+      onLock = { loginViewModel.onAction(LoginAction.LockNow("manual")) },
       onOpenProducts = onOpenProducts,
       onOpenStock = onOpenStock,
       onOpenCash = onOpenCash,

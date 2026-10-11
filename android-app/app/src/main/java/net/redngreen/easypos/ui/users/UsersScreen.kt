@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.ui.lock.roleLabel
+import net.redngreen.easypos.designsystem.roleLabel
 
 /**
  * Admin user management (task 5.1): the staff list with entry points to

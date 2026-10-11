@@ -60,7 +60,9 @@ import net.redngreen.easypos.R
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.core.print.PrintState
 import net.redngreen.easypos.designsystem.ExtendedTheme
-import net.redngreen.easypos.ui.session.SessionViewModel
+import net.redngreen.easypos.feature.login.ui.LoginViewModel
+import net.redngreen.easypos.feature.login.ui.model.LoginAction
+import org.koin.androidx.compose.koinViewModel
 
 private val DAY_LABEL = DateTimeFormatter.ofPattern("EEE, d MMM yyyy")
 
@@ -76,7 +78,7 @@ fun DaySummaryScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DaySummaryViewModel = hiltViewModel(),
-    sessionViewModel: SessionViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val shopName by viewModel.shopName.collectAsStateWithLifecycle()
@@ -327,7 +329,7 @@ fun DaySummaryScreen(
                 Button(
                     onClick = {
                         viewModel.printReport()
-                        sessionViewModel.lockNow("register closed")
+                        loginViewModel.onAction(LoginAction.LockNow("register closed"))
                     },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                 ) {

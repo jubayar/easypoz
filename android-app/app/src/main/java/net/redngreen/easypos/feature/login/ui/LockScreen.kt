@@ -1,4 +1,4 @@
-package net.redngreen.easypos.ui.lock
+package net.redngreen.easypos.feature.login.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -36,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,11 +49,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
 import net.redngreen.easypos.core.security.PinHasher
-import net.redngreen.easypos.ui.session.SessionViewModel
+import net.redngreen.easypos.designsystem.roleLabel
+import net.redngreen.easypos.feature.login.ui.model.LoginAction
+import net.redngreen.easypos.feature.login.ui.model.LoginEvent
+import net.redngreen.easypos.feature.login.ui.model.LoginState
+import net.redngreen.easypos.shared.ObserveAsEvents
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Full-screen lock overlay (user-access-control spec). Unlocking, re-unlock
@@ -62,31 +68,60 @@ import net.redngreen.easypos.ui.session.SessionViewModel
  * First run (no users yet): shows the bootstrap Admin form instead.
  */
 @Composable
-fun LockScreen(
+fun LockRoot(
+    shopName: String,
     modifier: Modifier = Modifier,
-    viewModel: SessionViewModel = hiltViewModel(),
-    shellViewModel: net.redngreen.easypos.ui.main.ShellViewModel = hiltViewModel(),
+    viewModel: LoginViewModel = koinViewModel(),
 ) {
-    val hasUnlockableUser by viewModel.hasUnlockableUser.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    var unlockFailures by remember { mutableIntStateOf(0) }
+    var adminCreateFailures by remember { mutableIntStateOf(0) }
 
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            LoginEvent.UnlockFailed -> unlockFailures++
+            LoginEvent.AdminCreateFailed -> adminCreateFailures++
+        }
+    }
+
+    LockScreen(
+        state = state,
+        shopName = shopName,
+        unlockFailures = unlockFailures,
+        adminCreateFailures = adminCreateFailures,
+        onAction = viewModel::onAction,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun LockScreen(
+    state: LoginState,
+    shopName: String,
+    unlockFailures: Int,
+    adminCreateFailures: Int,
+    onAction: (LoginAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        when (hasUnlockableUser) {
+        when (state.hasUnlockableUser) {
             null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-            true -> UnlockContent(viewModel, shellViewModel)
-            false -> FirstRunAdminContent(viewModel)
+            true -> UnlockContent(state, shopName, unlockFailures, onAction)
+            false -> FirstRunAdminContent(adminCreateFailures, onAction)
         }
     }
 }
 
 @Composable
 private fun UnlockContent(
-    viewModel: SessionViewModel,
-    shellViewModel: net.redngreen.easypos.ui.main.ShellViewModel,
+    state: LoginState,
+    shopName: String,
+    unlockFailures: Int,
+    onAction: (LoginAction) -> Unit,
 ) {
-    val users by viewModel.unlockableUsers.collectAsStateWithLifecycle()
-    val shopName by shellViewModel.shopName.collectAsStateWithLifecycle()
+    val users = state.unlockableUsers
     var selectedUserId by rememberSaveable { mutableStateOf<String?>(null) }
     var pin by rememberSaveable { mutableStateOf("") }
     var error by rememberSaveable { mutableStateOf(false) }
@@ -97,6 +132,13 @@ private fun UnlockContent(
         if (selectedUserId != null && selected == null) {
             selectedUserId = null
             pin = ""
+        }
+    }
+    // A rejected PIN clears the entry and flags the dots.
+    LaunchedEffect(unlockFailures) {
+        if (unlockFailures > 0) {
+            pin = ""
+            error = true
         }
     }
 
@@ -174,12 +216,7 @@ private fun UnlockContent(
                     if (pin.length >= PinHasher.PIN_MIN_LENGTH) {
                         val attemptUserId = selected.id
                         val attemptPin = pin
-                        viewModel.unlock(attemptUserId, attemptPin) { ok ->
-                            if (!ok) {
-                                pin = ""
-                                error = true
-                            }
-                        }
+                        onAction(LoginAction.Unlock(attemptUserId, attemptPin))
                     } else {
                         error = true
                     }
@@ -203,7 +240,7 @@ private fun UserTile(
     selected: Boolean,
     onClick: () -> Unit,
 ) {
-    val roleLabel = roleLabel(role)
+    val roleText = roleLabel(role)
     Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -229,7 +266,7 @@ private fun UserTile(
             Column(Modifier.weight(1f)) {
                 Text(text = name, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = roleLabel,
+                    text = roleText,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -290,7 +327,7 @@ private fun PinPad(
                 row.forEach { key ->
                     when {
                         key.isEmpty() -> Surface(
-                            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(12.dp),
                             color = MaterialTheme.colorScheme.surfaceContainerLow,
                             modifier = Modifier.size(88.dp),
                         ) {
@@ -361,12 +398,22 @@ private fun PinDots(count: Int, error: Boolean) {
 
 /** Bootstrap: no users exist yet — create the first Admin (feeds 11.2 wizard later). */
 @Composable
-private fun FirstRunAdminContent(viewModel: SessionViewModel) {
+private fun FirstRunAdminContent(
+    adminCreateFailures: Int,
+    onAction: (LoginAction) -> Unit,
+) {
     val pinHasher = remember { PinHasher() }
     var name by rememberSaveable { mutableStateOf("") }
     var pin by rememberSaveable { mutableStateOf("") }
     var error by rememberSaveable { mutableStateOf(false) }
     var saving by remember { mutableStateOf(false) }
+
+    LaunchedEffect(adminCreateFailures) {
+        if (adminCreateFailures > 0) {
+            saving = false
+            error = true
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -412,10 +459,7 @@ private fun FirstRunAdminContent(viewModel: SessionViewModel) {
                         error = true
                     } else {
                         saving = true
-                        viewModel.createFirstAdmin(name, pin) { ok ->
-                            saving = false
-                            if (!ok) error = true
-                        }
+                        onAction(LoginAction.CreateFirstAdmin(name, pin))
                     }
                 },
                 enabled = name.isNotBlank() && pin.isNotEmpty(),
@@ -425,11 +469,4 @@ private fun FirstRunAdminContent(viewModel: SessionViewModel) {
             }
         }
     }
-}
-
-@Composable
-fun roleLabel(role: String): String = when (role) {
-    "ADMIN" -> stringResource(R.string.role_admin)
-    "MANAGER" -> stringResource(R.string.role_manager)
-    else -> stringResource(R.string.role_cashier)
 }

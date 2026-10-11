@@ -14,6 +14,8 @@ import net.redngreen.easypos.core.di.syncModule
 import net.redngreen.easypos.core.network.TokenStore
 import net.redngreen.easypos.core.sync.SyncScheduler
 import net.redngreen.easypos.core.sync.SyncStatusRepository
+import net.redngreen.easypos.feature.login.data.di.loginDataModule
+import net.redngreen.easypos.feature.login.ui.di.loginUiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -39,6 +41,8 @@ class EasyPosApp : Application() {
                 sessionModule,
                 printModule,
                 bridgeRepoModule,
+                loginDataModule,
+                loginUiModule,
             )
         }
         // Background sync triggers (task 12.3): never on the sell path.

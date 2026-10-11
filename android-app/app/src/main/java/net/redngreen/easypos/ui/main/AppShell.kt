@@ -54,8 +54,10 @@ import net.redngreen.easypos.core.sync.SyncStatus
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role
 import net.redngreen.easypos.designsystem.ExtendedTheme
-import net.redngreen.easypos.ui.lock.roleLabel
-import net.redngreen.easypos.ui.session.SessionViewModel
+import net.redngreen.easypos.designsystem.roleLabel
+import net.redngreen.easypos.feature.login.ui.LoginViewModel
+import net.redngreen.easypos.feature.login.ui.model.LoginAction
+import org.koin.androidx.compose.koinViewModel
 
 /** Sidebar + content slot — the persistent shell every screen renders in. */
 @Composable
@@ -63,11 +65,12 @@ fun AppShell(
     current: NavKey?,
     onOpen: (NavKey) -> Unit,
     modifier: Modifier = Modifier,
-    sessionViewModel: SessionViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel = koinViewModel(),
     shellViewModel: ShellViewModel = hiltViewModel(),
     content: @Composable () -> Unit,
 ) {
-    val activeUser by sessionViewModel.activeUser.collectAsStateWithLifecycle()
+    val loginState by loginViewModel.state.collectAsStateWithLifecycle()
+    val activeUser = loginState.activeUser
     val shopName by shellViewModel.shopName.collectAsStateWithLifecycle()
     val syncStatus by shellViewModel.syncStatus.collectAsStateWithLifecycle()
 
@@ -105,7 +108,7 @@ fun AppShell(
             adminItems = adminItems,
             current = current,
             onOpen = onOpen,
-            onLock = { sessionViewModel.lockNow("manual") },
+            onLock = { loginViewModel.onAction(LoginAction.LockNow("manual")) },
             modifier = Modifier.width(224.dp),
         )
         HorizontalDivider(Modifier.fillMaxHeight().width(1.dp), color = MaterialTheme.colorScheme.outlineVariant)

@@ -27,10 +27,13 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import net.redngreen.easypos.designsystem.EasyPOSTheme
-import net.redngreen.easypos.ui.lock.LockScreen
+import net.redngreen.easypos.feature.login.ui.LockRoot
+import net.redngreen.easypos.feature.login.ui.LoginViewModel
+import net.redngreen.easypos.feature.login.ui.model.LoginAction
+import net.redngreen.easypos.ui.main.ShellViewModel
 import net.redngreen.easypos.ui.onboarding.OnboardingViewModel
 import net.redngreen.easypos.ui.onboarding.OnboardingWizard
-import net.redngreen.easypos.ui.session.SessionViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -70,12 +73,15 @@ class MainActivity : AppCompatActivity() {
  */
 @Composable
 private fun AppRoot(
-  sessionViewModel: SessionViewModel = hiltViewModel(),
+  loginViewModel: LoginViewModel = koinViewModel(),
+  shellViewModel: ShellViewModel = hiltViewModel(),
   onboardingViewModel: OnboardingViewModel = hiltViewModel(),
 ) {
-  val activeUser by sessionViewModel.activeUser.collectAsStateWithLifecycle()
-  val hasAnyUser by sessionViewModel.hasAnyUser.collectAsStateWithLifecycle()
-  val idleLockMinutes by sessionViewModel.idleLockMinutes.collectAsStateWithLifecycle()
+  val loginState by loginViewModel.state.collectAsStateWithLifecycle()
+  val activeUser = loginState.activeUser
+  val hasAnyUser = loginState.hasAnyUser
+  val idleLockMinutes = loginState.idleLockMinutes
+  val shopName by shellViewModel.shopName.collectAsStateWithLifecycle()
   val onboardingDone by onboardingViewModel.done.collectAsStateWithLifecycle()
 
   val lastInteraction = remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -91,7 +97,7 @@ private fun AppRoot(
     MainNavigation()
 
     when {
-      activeUser == null -> LockScreen()
+      activeUser == null -> LockRoot(shopName = shopName)
       // First-run wizard resumes until finished/skipped (task 11.2), covering the sell screen.
       onboardingDone == false -> OnboardingWizard(viewModel = onboardingViewModel)
     }
@@ -105,7 +111,7 @@ private fun AppRoot(
       if (activeUser != null &&
         System.currentTimeMillis() - lastInteraction.longValue >= timeoutMs
       ) {
-        sessionViewModel.lockNow("idle")
+        loginViewModel.onAction(LoginAction.LockNow("idle"))
       }
     }
   }
