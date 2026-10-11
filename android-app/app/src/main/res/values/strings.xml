@@ -1,0 +1,458 @@
+<resources>
+    <string name="app_name">EasyPOS</string>
+
+    <!-- Sell screen -->
+    <string name="sell_title">Sell</string>
+    <string name="search_hint">Scan barcode or search product…</string>
+    <string name="cart_empty">Cart is empty — scan or tap a product</string>
+    <string name="cart_subtotal">Subtotal</string>
+    <string name="cart_total">Total</string>
+    <string name="action_pay">Pay</string>
+    <string name="action_hold">Hold</string>
+    <string name="action_clear">Clear cart</string>
+    <string name="action_quick_sell">Quick sell</string>
+    <string name="barcode_not_found">No product with this barcode</string>
+    <string name="barcode_not_found_create">Create product</string>
+    <string name="barcode_not_found_quick_sell">Quick sell instead</string>
+    <string name="stock_on_hand">Baki %1$d</string>
+    <string name="stock_low">Low</string>
+
+    <!-- Payment -->
+    <string name="payment_title">Payment</string>
+    <string name="payment_cash_tendered">Cash tendered</string>
+    <string name="payment_change">Change</string>
+    <string name="payment_under_tender">Remaining: %1$s</string>
+    <string name="payment_confirm">Confirm payment</string>
+
+    <!-- Navigation -->
+    <string name="nav_sell">Sell</string>
+    <string name="nav_products">Products</string>
+    <string name="nav_stock">Stock</string>
+    <string name="nav_cash">Cash</string>
+    <string name="nav_history">History</string>
+    <string name="nav_day_summary">Day Summary</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Sync status -->
+    <string name="sync_synced">Synced</string>
+    <string name="sync_syncing">Syncing…</string>
+    <string name="sync_offline_pending">Offline · %1$d pending</string>
+    <string name="sync_error">Sync error</string>
+    <string name="sync_setup">Set up sync</string>
+    <string name="sync_pending">%1$d pending</string>
+    <string name="sync_pending_label">Pending upload</string>
+    <string name="sync_offline_label">Offline</string>
+
+    <!-- Sync & account -->
+    <string name="sync_title">Sync &amp; account</string>
+    <string name="sync_shop_id">Shop ID: %1$s</string>
+    <string name="sync_not_signed_in">Not signed in — all data stays on this tablet.</string>
+    <string name="sync_restore_hint">Signing in restores the full shop dataset from the cloud and makes this the active tablet.</string>
+    <string name="sync_identifier_label">Phone or email</string>
+    <string name="sync_send_code">Send code</string>
+    <string name="sync_code_label">6-digit code</string>
+    <string name="sync_dev_code">Dev code: %1$s</string>
+    <string name="sync_sign_in">Sign in &amp; restore</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_sign_out">Sign out</string>
+    <string name="sync_conflicts_title">Sync conflicts</string>
+    <string name="sync_conflicts_empty">No conflicts</string>
+    <string name="sync_conflict_row">%1$s · %2$s</string>
+    <string name="sync_now_done">Sync complete — pushed %1$d, pulled %2$d</string>
+    <string name="sync_restored">Restored %1$d changes</string>
+    <string name="sync_send_failed">Could not send the code — try again</string>
+
+    <!-- Settings -->
+    <string name="settings_language">Language</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_bahasa">Bahasa Melayu</string>
+
+    <!-- User access control -->
+    <string name="lock_title">Locked</string>
+    <string name="lock_enter_pin">Enter PIN for %1$s</string>
+    <string name="lock_wrong_pin">Incorrect PIN</string>
+    <string name="lock_cancel">Cancel</string>
+    <string name="lock_unlock">Unlock</string>
+
+    <string name="setup_title">Create your Admin account</string>
+    <string name="setup_name_hint">Your name</string>
+    <string name="setup_pin_hint">PIN (4–6 digits)</string>
+    <string name="setup_create">Create Admin</string>
+
+    <string name="users_title">Users</string>
+    <string name="users_you">You</string>
+    <string name="user_add">Add user</string>
+    <string name="user_create_title">New user</string>
+    <string name="user_edit_title">Edit user</string>
+    <string name="user_name_label">Name</string>
+    <string name="user_role_label">Role</string>
+    <string name="user_pin_label">PIN (4–6 digits)</string>
+    <string name="user_pin_new_label">New PIN (leave blank to keep current)</string>
+    <string name="user_active_label">Active</string>
+    <string name="user_inactive">Inactive</string>
+    <string name="user_save">Save</string>
+
+    <string name="role_admin">Admin</string>
+    <string name="role_manager">Manager</string>
+    <string name="role_cashier">Cashier</string>
+
+    <string name="access_denied">You do not have permission for this action</string>
+
+    <string name="action_back">Back</string>
+    <string name="action_lock">Lock</string>
+    <string name="action_switch_user">Switch user</string>
+
+    <string name="error_pin_invalid">PIN must be 4–6 digits</string>
+    <string name="error_name_required">Name is required</string>
+    <string name="error_last_admin">Cannot deactivate or demote the last active Admin</string>
+    <string name="error_unknown">Something went wrong — try again</string>
+
+    <string name="activity_log_title">Activity log</string>
+    <string name="activity_log_unknown_user">Unknown</string>
+    <string name="activity_log_type_login">Login</string>
+    <string name="activity_log_type_login_failed">PIN rejected</string>
+    <string name="activity_log_type_lock">Locked</string>
+    <string name="activity_log_type_action">Action</string>
+    <string name="activity_log_type_denial">Denied</string>
+
+    <!-- Product catalog -->
+    <string name="products_title">Products</string>
+    <string name="product_add">Add product</string>
+    <string name="product_create_title">New product</string>
+    <string name="product_edit_title">Edit product</string>
+    <string name="product_category_label">Category</string>
+    <string name="product_barcode_label">Barcode</string>
+    <string name="product_barcode_hint">Unique — scan or type</string>
+    <string name="product_sku_label">SKU</string>
+    <string name="product_cost_label">Cost (RM)</string>
+    <string name="product_price_label">Sale price (RM)</string>
+    <string name="product_margin_preview">Margin: %1$s · %2$s</string>
+    <string name="product_initial_stock_label">Initial stock (optional)</string>
+    <string name="product_emoji_label">Emoji</string>
+    <string name="product_location_label">Shelf location</string>
+    <string name="product_location_hint">e.g. Rack A-03, Chiller 2</string>
+    <string name="product_active_sellable">Active — visible and sellable</string>
+    <string name="product_inactive_hidden">Inactive — hidden from grid and scan</string>
+    <string name="products_count">Showing %1$d of %2$d products</string>
+    <string name="catalog_search_hint">Search name, barcode, or SKU</string>
+    <string name="stock_on_hand_low">Baki %1$d · Low</string>
+
+    <string name="categories_title">Categories</string>
+    <string name="categories_add">Add category</string>
+    <string name="categories_rename">Rename category</string>
+    <string name="categories_name_label">Name</string>
+    <string name="categories_apply_order">Apply order</string>
+    <string name="categories_move_up">Move up</string>
+    <string name="categories_move_down">Move down</string>
+    <string name="action_rename">Rename</string>
+    <string name="action_more">More</string>
+    <string name="csv_category_default">Uncategorized</string>
+
+    <string name="csv_import_title">Import CSV</string>
+    <string name="csv_export_title">Export CSV</string>
+    <string name="csv_import_intro">Import products from a CSV file (Aronium exports work directly). Bad rows are reported and never abort the import.</string>
+    <string name="csv_import_pick">Choose CSV file</string>
+    <string name="csv_import_format_error">Could not read the file: %1$s</string>
+    <string name="csv_import_preview">%1$d rows ready · %2$d rows have errors</string>
+    <string name="csv_import_row_failure">Row %1$d: %2$s</string>
+    <string name="csv_import_apply">Import %1$d rows</string>
+    <string name="csv_import_choose_other">Choose another file</string>
+    <string name="csv_import_summary">%1$d created · %2$d updated · %3$d failed</string>
+    <string name="csv_import_failed_rows">Failed rows</string>
+    <string name="csv_import_retry_failed">Retry failed rows</string>
+    <string name="csv_import_all_done">All rows imported.</string>
+    <string name="csv_import_another">Import another file</string>
+
+    <string name="error_barcode_taken">This barcode is already used by another product</string>
+    <string name="error_price_invalid">Enter a valid sale price</string>
+    <string name="error_cost_invalid">Enter a valid cost</string>
+    <string name="error_stock_invalid">Stock must be a whole number</string>
+
+    <!-- Sales terminal -->
+    <string name="category_all">All</string>
+    <string name="search_no_results">No products match</string>
+    <string name="grid_empty_hint">No products yet — add or import from the Products menu</string>
+    <string name="cart_title">Cart (%1$d)</string>
+    <string name="clear_cart_confirm">Clear the cart? No sale will be recorded.</string>
+    <string name="clear_cart_yes">Clear</string>
+    <string name="sale_completed">Sale #%1$d completed</string>
+    <string name="barcode_not_found_detail">No product with barcode %1$s</string>
+    <string name="quick_sell_name_hint">Item name</string>
+    <string name="quick_sell_price_hint">Price (RM)</string>
+    <string name="quick_sell_add">Add to cart</string>
+    <string name="held_default_label">Held</string>
+    <string name="held_label_hint">Label (optional)</string>
+    <string name="void_line_title">Void line</string>
+    <string name="void_reason_hint">Reason (required)</string>
+    <string name="void_line_confirm">Void</string>
+    <string name="void_line_short">Void</string>
+
+    <!-- Sales history -->
+    <string name="history_title">Sales history</string>
+    <string name="history_today">Today</string>
+    <string name="history_yesterday">Yesterday</string>
+    <string name="history_pick_date">Pick date</string>
+    <string name="history_empty">No sales this day</string>
+    <string name="history_row_summary">%1$d items · %2$s</string>
+    <string name="history_detail_title">Sale #%1$d</string>
+    <string name="history_payment_type">Payment</string>
+    <string name="history_cashier">Cashier</string>
+    <string name="history_reprint">Reprint</string>
+    <string name="history_share">Share</string>
+
+    <string name="payment_merchant_qr">Merchant QR</string>
+    <string name="payment_merchant_qr_hint">Confirm payment received to complete the sale</string>
+
+    <!-- Stock management -->
+    <string name="stock_title">Stock</string>
+    <string name="stock_filter_all">All</string>
+    <string name="stock_filter_low">Low</string>
+    <string name="stock_filter_zero">Zero</string>
+    <string name="stock_filter_negative">Negative</string>
+    <string name="stock_filter_count">%1$s (%2$d)</string>
+    <string name="stock_empty">No products</string>
+    <string name="stock_current_on_hand">On hand: %1$d</string>
+    <string name="stock_valuation_cost">Value at cost</string>
+    <string name="stock_valuation_sale">Value at sale price</string>
+    <string name="stock_valuation_margin">Margin</string>
+    <string name="stock_valuation_margin_value">%1$s · %2$s</string>
+    <string name="stock_threshold_label">Low-stock threshold</string>
+    <string name="stock_threshold_save">Save threshold</string>
+    <string name="stock_adjust_title">Adjust stock</string>
+    <string name="stock_adjust_mode_set">Set count</string>
+    <string name="stock_adjust_mode_receive">Receive</string>
+    <string name="stock_adjust_mode_remove">Remove</string>
+    <string name="stock_adjust_amount">Quantity</string>
+    <string name="stock_adjust_reason">Reason (required)</string>
+    <string name="stock_adjust_apply">Apply</string>
+    <string name="stock_reason_count">Kiraan Fizikal</string>
+    <string name="stock_reason_damaged">Rosak</string>
+    <string name="stock_reason_new_stock">Stok Baharu</string>
+    <string name="stock_history_title">Stock history</string>
+    <string name="stock_history_empty">No stock changes yet</string>
+    <string name="stock_history_change">%1$d → %2$d</string>
+    <string name="stock_reason_sale">Sale</string>
+    <string name="stock_reason_adjust">Adjustment</string>
+    <string name="stock_reason_import">Import</string>
+    <string name="stock_error_amount">Enter a valid quantity</string>
+    <string name="stock_error_reason">Enter a reason</string>
+    <string name="action_adjust">Adjust</string>
+    <string name="action_close">Close</string>
+
+    <!-- Cash management -->
+    <string name="cash_title">Cash</string>
+    <string name="cash_expected_drawer">Expected drawer</string>
+    <string name="cash_expected_hint">Not counted — cash sales + in − out</string>
+    <string name="cash_in">Cash in</string>
+    <string name="cash_out">Cash out</string>
+    <string name="cash_amount">Amount (RM)</string>
+    <string name="cash_reason">Reason (required)</string>
+    <string name="cash_reason_float">Float top-up</string>
+    <string name="cash_reason_restock">Supplier restock</string>
+    <string name="cash_reason_ewallet">E-wallet cash-out</string>
+    <string name="cash_reason_petty">Petty cash</string>
+    <string name="cash_save">Record entry</string>
+    <string name="cash_log_title">Cash log</string>
+    <string name="cash_log_empty">No cash entries yet</string>
+    <string name="cash_error_amount">Enter a valid amount</string>
+    <string name="cash_error_reason">Reason is required</string>
+
+    <!-- Printer & printing -->
+    <string name="printer_title">Printer</string>
+    <string name="printer_bt_unavailable">Bluetooth is not available on this device</string>
+    <string name="printer_devices_title">Paired printers</string>
+    <string name="printer_no_devices">No paired printers — pair one in Bluetooth settings</string>
+    <string name="printer_pair">Pair a printer</string>
+    <string name="printer_width_title">Paper width</string>
+    <string name="printer_width_58">58mm</string>
+    <string name="printer_width_80">80mm</string>
+    <string name="printer_drawer_kick">Open cash drawer on cash sale</string>
+    <string name="printer_test">Test print</string>
+    <string name="printer_printing">Printing…</string>
+    <string name="printer_retry">Retry</string>
+    <string name="printer_error">Printer unreachable</string>
+    <string name="printer_selected">Selected</string>
+    <string name="print_failed_retry">Print failed — tap to retry</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_shop_profile">Shop profile</string>
+    <string name="settings_name">Shop name</string>
+    <string name="settings_address">Address</string>
+    <string name="settings_phone">Phone</string>
+    <string name="settings_logo">Logo</string>
+    <string name="settings_receipt_branding">Receipt branding</string>
+    <string name="settings_receipt_header">Header line</string>
+    <string name="settings_receipt_footer">Footer message</string>
+    <string name="settings_preview">Preview</string>
+    <string name="settings_security">Security &amp; drawer</string>
+    <string name="settings_idle_lock">Auto-lock after (minutes)</string>
+    <string name="settings_merchant_qr">Merchant QR (DuitNow)</string>
+    <string name="settings_save">Save</string>
+    <string name="settings_saved">Saved</string>
+    <string name="settings_choose_image">Choose image</string>
+    <string name="settings_remove_image">Remove</string>
+    <string name="settings_error_name">Shop name is required</string>
+
+    <!-- Payment type manager -->
+    <string name="payment_types_title">Payment types</string>
+    <string name="payment_add">Add type</string>
+    <string name="payment_name">Name</string>
+    <string name="payment_kind_cash">Cash</string>
+    <string name="payment_kind_other">Non-cash</string>
+
+    <!-- First-run onboarding wizard -->
+    <string name="onboarding_title">Welcome to EasyPOS</string>
+    <string name="onboarding_skip">Skip for now</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_finish">Finish</string>
+    <string name="onboarding_profile_title">Shop profile</string>
+    <string name="onboarding_printer_title">Printer (optional)</string>
+    <string name="onboarding_products_title">Products (optional)</string>
+    <string name="onboarding_products_hint">Add a few products now, or import a CSV later from Products → Import.</string>
+    <string name="onboarding_add_product">Add product</string>
+    <string name="onboarding_products_added">%1$d products added</string>
+    <string name="onboarding_error_name">Shop name is required</string>
+    <string name="onboarding_error_product">Enter a product name and price</string>
+
+    <!-- Backup & restore -->
+    <string name="backup_title">Backup</string>
+    <string name="backup_export">Export backup</string>
+    <string name="backup_restore">Restore from file</string>
+    <string name="backup_export_hint">Saves a single file with all shop data (no PINs or tokens). Restoring replaces local data.</string>
+    <string name="backup_restored">Restored %1$d products · %2$d sales · %3$d users</string>
+    <string name="backup_error">Backup failed: %1$s</string>
+    <string name="settings_backup">Backup &amp; restore</string>
+
+    <!-- Stitch design update: sell / payment -->
+    <string name="category_chip_count">%1$s (%2$d)</string>
+    <string name="action_custom_item">Custom</string>
+    <string name="sell_scanner_ready">Scanner ready</string>
+    <string name="cart_walk_in">Walk-in customer</string>
+    <string name="cart_unit_price">%1$s / unit</string>
+    <string name="payment_tender_exact_short">Exact</string>
+    <string name="sell_sst_zero">SST / Tax (0%%)</string>
+    <string name="cart_total_due">Total due</string>
+    <string name="cart_items_count">%1$d items</string>
+    <string name="pay_duitnow">DuitNow</string>
+    <string name="action_pay_amount">Pay %1$s</string>
+    <string name="keypad_backspace">Backspace</string>
+    <string name="payment_checkout_total">Checkout total</string>
+    <string name="payment_sst_included">SST 0%% included</string>
+    <string name="payment_drawer_ready">Cash drawer ready</string>
+    <string name="payment_items_line">%1$d items · %2$s</string>
+    <string name="payment_method_instant_drawer">Instant drawer</string>
+    <string name="payment_method_instant_pay">Instant pay</string>
+    <string name="payment_tendered_label">Tendered</string>
+    <string name="payment_reset">Reset</string>
+    <string name="payment_add_rm">+ RM %1$d</string>
+    <string name="payment_tender_exact">Exact %1$s</string>
+    <string name="payment_tender_change_hint">RM %1$s (+%2$s)</string>
+    <string name="payment_change_due">Change due</string>
+    <string name="payment_complete_change">Complete sale (%1$s change)</string>
+    <string name="payment_confirm_paid">Confirm paid</string>
+    <string name="payment_return">Return to register</string>
+    <string name="payment_success_title">Payment successful!</string>
+    <string name="payment_receipt_no">Receipt #%1$d</string>
+    <string name="payment_success_total_paid">Total paid</string>
+    <string name="payment_success_change_dispensed">Change dispensed</string>
+    <string name="payment_success_method">Payment method</string>
+    <string name="payment_next_customer">Next customer</string>
+
+    <!-- Quick price edit (task 6.7) -->
+    <string name="quickedit_auth_title">Manager authorization</string>
+    <string name="quickedit_auth_hint">Editing the price of %1$s requires a Manager or Admin PIN</string>
+    <string name="quickedit_auth_pin">Manager PIN</string>
+    <string name="quickedit_auth_confirm">Authorize</string>
+    <string name="quickedit_authorized_badge">Authorized: %1$s (%2$s)</string>
+    <string name="quickedit_sale_price">SALE PRICE</string>
+    <string name="quickedit_cost">COST PER UNIT</string>
+    <string name="quickedit_old_price">Was %1$s</string>
+    <string name="quickedit_delta_up">+%1$s from old price</string>
+    <string name="quickedit_delta_down">−%1$s from old price</string>
+    <string name="quickedit_reset">Reset %1$s</string>
+    <string name="quickedit_margin">Margin: %1$s (%2$s%%)</string>
+    <string name="quickedit_margin_healthy">Healthy</string>
+    <string name="quickedit_margin_thin">Thin</string>
+    <string name="quickedit_save">Save new price</string>
+    <string name="quickedit_footnote">Applied instantly · Audited under %1$s · Offline-safe</string>
+
+    <!-- Stitch design update: stock -->
+    <string name="stock_title_subtitle">Stock management</string>
+    <string name="stock_movement_today">Today\'s movement</string>
+    <string name="stock_movement_value">+%1$d in / %2$d out</string>
+    <string name="stock_segment_all">All products</string>
+    <string name="stock_showing_of">Showing %1$d of %2$d registered items</string>
+    <string name="stock_status_ok">In stock</string>
+    <string name="stock_status_low">Low stock</string>
+    <string name="stock_status_out">Out of stock</string>
+    <string name="stock_status_negative">Negative stock</string>
+    <string name="stock_on_hand_units">%1$d units</string>
+    <string name="stock_row_sku">SKU: %1$s</string>
+    <string name="stock_row_edit">Edit</string>
+    <string name="stock_valuation_title">Total inventory value</string>
+    <string name="stock_export_csv">Export CSV</string>
+
+    <!-- Stitch design update: cash -->
+    <string name="cash_title_subtitle">Drawer log &amp; petty cash</string>
+    <string name="cash_new_entry_title">New drawer entry</string>
+    <string name="cash_total_in_today">In today: %1$s</string>
+    <string name="cash_total_out_today">Out today: %1$s</string>
+    <string name="cash_reason_custom_hint">Reason / reference note</string>
+    <string name="cash_record_in">Record cash in (%1$s)</string>
+    <string name="cash_record_out">Record cash out (%1$s)</string>
+    <string name="cash_cashier_in_charge">Cashier in charge: %1$s</string>
+    <string name="cash_log_subtitle">Real-time ledger for the retail drawer</string>
+    <string name="cash_log_showing">Showing latest %1$d entries</string>
+
+    <!-- Stitch design update: day summary / Z-report (tasks 9.3 + 9.5) -->
+    <string name="day_title">Day Summary (Z-Report)</string>
+    <string name="day_subtitle">Daily reconciliation &amp; audit closure · %1$s</string>
+    <string name="day_share_pdf">Share PDF report</string>
+    <string name="day_print">Print receipt</string>
+    <string name="day_prev">Previous day</string>
+    <string name="day_next">Next day</string>
+    <string name="day_gross_sales">Total gross sales</string>
+    <string name="day_transactions">%1$d transactions</string>
+    <string name="day_vs_yesterday_up">+%1$s%% vs yesterday</string>
+    <string name="day_vs_yesterday_down">−%1$s%% vs yesterday</string>
+    <string name="day_avg_basket">Average basket</string>
+    <string name="day_avg_basket_caption">per customer ticket</string>
+    <string name="day_expected_drawer">Expected drawer cash</string>
+    <string name="day_reconciled">Reconciled</string>
+    <string name="day_variance">Variance %1$s</string>
+    <string name="day_cash_movement">Cash drawer movement</string>
+    <string name="day_cash_movement_hint">Real-time ledger audit trail for the physical till</string>
+    <string name="day_cash_sales">Cash sales revenue</string>
+    <string name="day_cash_in">Manual cash in</string>
+    <string name="day_cash_out">Manual cash out (payout)</string>
+    <string name="day_physical_count">Actual physical count</string>
+    <string name="day_save_count">Save count</string>
+    <string name="day_count_match">Match (RM 0.00 variance) — ready for bank deposit</string>
+    <string name="day_count_variance">Variance %1$s recorded — journaled with attribution</string>
+    <string name="day_tenders">Payment tenders</string>
+    <string name="day_tenders_caption">%1$d receipts</string>
+    <string name="day_tender_orders">%1$d orders</string>
+    <string name="day_top_sellers">Top selling products</string>
+    <string name="day_top_sellers_caption">Ranked by volume</string>
+    <string name="day_top_seller_units">%1$d units sold</string>
+    <string name="day_close_register">Close register &amp; lock</string>
+
+    <!-- Stitch design update: product entry -->
+    <string name="product_section_identity">Identity &amp; classification</string>
+    <string name="product_section_pricing">Pricing &amp; margin</string>
+    <string name="product_section_stock">Stock &amp; terminal visibility</string>
+    <string name="product_current_on_hand">Current stock on hand: %1$d units</string>
+    <string name="product_threshold_units">%1$d units</string>
+    <string name="product_threshold_hint">Low-stock alert threshold — triggers the amber badge on the Sell screen</string>
+    <string name="product_margin_healthy">Healthy</string>
+    <string name="product_margin_thin">Thin</string>
+    <string name="product_tile_preview">Live sell tile preview</string>
+    <string name="product_tile_preview_hint">How it appears on the cashier Sell screen</string>
+    <string name="product_preview_name">Product name</string>
+
+    <!-- Stitch design update: lock screen -->
+    <string name="lock_pick_profile">Pick your profile and enter your 4-digit PIN</string>
+    <string name="lock_backspace">Clear</string>
+    <string name="lock_forgot_pin">Forgot PIN? Contact the shop supervisor</string>
+</resources>

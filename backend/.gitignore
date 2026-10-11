@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+# Prisma generated client (regenerated via `npx prisma generate`)
+src/generated/
+.env
+*.log

@@ -1,0 +1,366 @@
+// EasyPOS sync backend schema (design D4/D6).
+//
+// Sync-entity IDs (user, category, product, sale, sale_line, stock_delta,
+// cash_entry, drawer_count, payment_type, tenant_config, settings) are
+// client-generated UUIDs — offline inserts must not depend on a central
+// counter. Every synced row carries shop_id + updated_at: the multi-tenant
+// scope and the LWW conflict key (D5).
+//
+// Server-owned rows (shop_account, device, license, change_log) use server
+// defaults. change_log.id is the global monotonic sequence; per-shop pull
+// cursors are a monotonic subsequence of it.
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  CASHIER
+}
+
+enum StockDeltaReason {
+  SALE
+  ADJUST
+  IMPORT
+}
+
+enum CashDirection {
+  IN
+  OUT
+}
+
+enum PaymentKind {
+  CASH
+  OTHER
+}
+
+enum LicenseStatus {
+  TRIAL
+  ACTIVE
+  EXPIRED
+}
+
+// ─── Server-owned: accounts, devices, licenses ─────────────────────────────
+
+model ShopAccount {
+  id        String   @id @default(uuid()) @db.Uuid
+  phone     String?  @unique
+  email     String?  @unique
+  name      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  config       TenantConfig?
+  devices      Device[]
+  licenses     License[]
+  users        User[]
+  categories   Category[]
+  products     Product[]
+  sales        Sale[]
+  cashEntries  CashEntry[]
+  drawerCounts DrawerCount[]
+  paymentTypes PaymentType[]
+  settings     ShopSetting[]
+
+  @@map("shop_account")
+}
+
+model TenantConfig {
+  shopId    String   @id @db.Uuid
+  name      String   @default("")
+  address   String   @default("")
+  phone     String   @default("")
+  logo      String? // base64 bitmap, same as the local entity
+  currency  String   @default("MYR")
+  language  String   @default("en")
+  updatedAt DateTime @updatedAt
+
+  shop ShopAccount @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@map("tenant_config")
+}
+
+model Device {
+  id           String    @id @default(uuid()) @db.Uuid
+  shopId       String    @db.Uuid
+  name         String    @default("")
+  active       Boolean   @default(true) // one active tablet per shop (D5)
+  registeredAt DateTime  @default(now())
+  demotedAt    DateTime?
+  lastSeenAt   DateTime?
+
+  shop ShopAccount @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+  @@map("device")
+}
+
+model License {
+  id             String        @id @default(uuid()) @db.Uuid
+  shopId         String        @db.Uuid
+  key            String?       @unique // null while on trial only
+  status         LicenseStatus @default(TRIAL)
+  trialDays      Int           @default(14)
+  trialStartedAt DateTime?
+  activatedAt    DateTime?
+  expiresAt      DateTime? // signed payload source (D9)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  shop ShopAccount @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+  @@map("license")
+}
+
+// ─── Synced domain entities (mirror local Room entities, D4) ───────────────
+
+model User {
+  id        String   @id @db.Uuid
+  shopId    String   @db.Uuid
+  name      String
+  role      UserRole @default(CASHIER)
+  pinSalt   String   @default("")
+  pinHash   String   @default("")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shop         ShopAccount   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  sales        Sale[]
+  stockDeltas  StockDelta[]
+  cashEntries  CashEntry[]
+  drawerCounts DrawerCount[]
+
+  @@index([shopId])
+  @@map("users")
+}
+
+model Category {
+  id        String   @id @db.Uuid
+  shopId    String   @db.Uuid
+  name      String
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  shop     ShopAccount @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@index([shopId])
+  @@map("categories")
+}
+
+model Product {
+  id                String   @id @db.Uuid
+  shopId            String   @db.Uuid
+  categoryId        String?  @db.Uuid
+  name              String
+  barcode           String?
+  sku               String?
+  costCents         BigInt   @default(0)
+  priceCents        BigInt   @default(0)
+  taxRateBps        Int? // basis points; null = tax not tracked
+  active            Boolean  @default(true)
+  lowStockThreshold Int      @default(5)
+  emoji             String?
+  color             String?
+  photo             String? // base64; optional, may be excluded from sync payloads
+  location          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  shop        ShopAccount  @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  category    Category?    @relation(fields: [categoryId], references: [id])
+  saleLines   SaleLine[]
+  stockDeltas StockDelta[]
+
+  @@unique([shopId, barcode])
+  @@index([shopId])
+  @@index([categoryId])
+  @@map("products")
+}
+
+model Sale {
+  id            String   @id @db.Uuid
+  shopId        String   @db.Uuid
+  localNo       Int // per-shop sequential
+  userId        String?  @db.Uuid
+  at            DateTime
+  totalCents    BigInt   @default(0)
+  paymentTypeId String?  @db.Uuid
+  tenderedCents BigInt?
+  changeCents   BigInt?
+  voided        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  shop        ShopAccount  @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  user        User?        @relation(fields: [userId], references: [id])
+  paymentType PaymentType? @relation(fields: [paymentTypeId], references: [id])
+  lines       SaleLine[]
+
+  @@unique([shopId, localNo])
+  @@index([shopId, at])
+  @@map("sales")
+}
+
+model SaleLine {
+  id         String   @id @db.Uuid
+  shopId     String   @db.Uuid
+  saleId     String   @db.Uuid
+  productId  String?  @db.Uuid
+  customName String?
+  qty        Int      @default(1)
+  unitCents  BigInt   @default(0)
+  lineCents  BigInt   @default(0)
+  voidReason String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  sale    Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@index([saleId])
+  @@index([productId])
+  @@map("sale_lines")
+}
+
+model StockDelta {
+  id        String           @id @db.Uuid
+  shopId    String           @db.Uuid
+  productId String           @db.Uuid
+  delta     Int
+  reason    StockDeltaReason
+  note      String? // human reason for a manual ADJUST ("Kiraan Fizikal", "Rosak", free text)
+  refId     String? // sale id for SALE, adjustment batch for ADJUST/IMPORT
+  userId    String?          @db.Uuid
+  at        DateTime
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id])
+
+  @@index([productId])
+  @@index([shopId, productId])
+  @@map("stock_deltas")
+}
+
+model CashEntry {
+  id          String        @id @db.Uuid
+  shopId      String        @db.Uuid
+  direction   CashDirection
+  amountCents BigInt
+  reason      String
+  userId      String?       @db.Uuid
+  at          DateTime
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  shop ShopAccount @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  user User?       @relation(fields: [userId], references: [id])
+
+  @@index([shopId, at])
+  @@map("cash_entries")
+}
+
+model DrawerCount {
+  id            String   @id @db.Uuid
+  shopId        String   @db.Uuid
+  at            DateTime
+  expectedCents BigInt
+  countedCents  BigInt
+  varianceCents BigInt
+  userId        String?  @db.Uuid
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  shop ShopAccount @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  user User?       @relation(fields: [userId], references: [id])
+
+  @@index([shopId, at])
+  @@map("drawer_counts")
+}
+
+model PaymentType {
+  id        String      @id @db.Uuid
+  shopId    String      @db.Uuid
+  name      String
+  kind      PaymentKind @default(CASH)
+  active    Boolean     @default(true)
+  sort      Int         @default(0)
+  updatedAt DateTime    @updatedAt
+
+  shop  ShopAccount @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  sales Sale[]
+
+  @@index([shopId])
+  @@map("payment_types")
+}
+
+model ShopSetting {
+  shopId    String
+  key       String
+  value     String
+  updatedAt DateTime @updatedAt
+
+  shop ShopAccount @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@id([shopId, key])
+  @@map("settings")
+}
+
+// ─── License keys: issued by admin, bound to a shop on activation ──────────
+
+model LicenseKey {
+  id            String    @id @default(uuid()) @db.Uuid
+  key           String    @unique
+  planDays      Int       @default(365)
+  boundToShopId String?   @db.Uuid // null until activated
+  issuedAt      DateTime  @default(now())
+  boundAt       DateTime?
+
+  @@map("license_keys")
+}
+
+// ─── Auth: one-time codes for register/login (D9) ──────────────────────────
+
+model OtpVerification {
+  id         String    @id @default(uuid()) @db.Uuid
+  identifier String // normalized phone (E.164-ish) or lowercased email
+  codeHash   String // SHA-256 of the 6-digit code
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([identifier, createdAt])
+  @@map("otp_verifications")
+}
+
+// ─── Server-side journal / sync cursor source (D5) ──────────────────────────
+
+model ChangeLog {
+  id          BigInt   @id @default(autoincrement())
+  shopId      String   @db.Uuid
+  journalOpId String   @unique @db.Uuid // client op id — the idempotency key
+  deviceId    String?  @db.Uuid
+  entity      String
+  entityId    String // row UUID, or settings key — entity-dependent
+  opType      String
+  payload     Json
+  actorUserId String?  @db.Uuid
+  createdAt   DateTime @default(now())
+
+  @@index([shopId, id])
+  @@map("change_log")
+}

@@ -65,7 +65,7 @@ Sale(id, shop_id, local_no [per-shop sequential], user_id, at, total_cents,
      payment_type_id, tendered_cents?, change_cents?, voided?)
 SaleLine(sale_id, product_id?, custom_name?, qty, unit_cents, line_cents, void_reason?)
 HeldSale(id, shop_id, user_id, label?, lines JSON, held_at)  -- parked cart; local-only, not synced; resumes as a new Sale
-StockDelta(id, product_id, delta, reason: SALE|ADJUST|IMPORT, ref_id?, user_id, at)
+StockDelta(id, product_id, delta, reason: SALE|ADJUST|IMPORT, note?, ref_id?, user_id, at)  -- note = human reason for a manual ADJUST ("Kiraan Fizikal", "Rosak", free text); null for SALE/IMPORT
 CashEntry(id, shop_id, direction: IN|OUT, amount_cents, reason, user_id, at)  -- immutable; reason is free text — UI presets are suggestions, stored as text
 DrawerCount(id, shop_id, at, expected_cents, counted_cents, variance_cents, user_id)  -- drawer reconciliation record
 PaymentType(id, shop_id, name, kind: CASH|OTHER, active, sort)

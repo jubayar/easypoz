@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- AppCompat parent required for per-app locale switching below API 33 -->
+    <style name="Theme.EasyPOS" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>
