@@ -30,9 +30,9 @@ import net.redngreen.easypos.designsystem.EasyPOSTheme
 import net.redngreen.easypos.feature.login.ui.LockRoot
 import net.redngreen.easypos.feature.login.ui.LoginViewModel
 import net.redngreen.easypos.feature.login.ui.model.LoginAction
+import net.redngreen.easypos.feature.onboarding.ui.OnboardingRoot
+import net.redngreen.easypos.feature.onboarding.ui.OnboardingViewModel
 import net.redngreen.easypos.ui.main.ShellViewModel
-import net.redngreen.easypos.ui.onboarding.OnboardingViewModel
-import net.redngreen.easypos.ui.onboarding.OnboardingWizard
 import org.koin.androidx.compose.koinViewModel
 
 @AndroidEntryPoint
@@ -75,14 +75,15 @@ class MainActivity : AppCompatActivity() {
 private fun AppRoot(
   loginViewModel: LoginViewModel = koinViewModel(),
   shellViewModel: ShellViewModel = hiltViewModel(),
-  onboardingViewModel: OnboardingViewModel = hiltViewModel(),
+  onboardingViewModel: OnboardingViewModel = koinViewModel(),
 ) {
   val loginState by loginViewModel.state.collectAsStateWithLifecycle()
   val activeUser = loginState.activeUser
   val hasAnyUser = loginState.hasAnyUser
   val idleLockMinutes = loginState.idleLockMinutes
   val shopName by shellViewModel.shopName.collectAsStateWithLifecycle()
-  val onboardingDone by onboardingViewModel.done.collectAsStateWithLifecycle()
+  val onboardingState by onboardingViewModel.state.collectAsStateWithLifecycle()
+  val onboardingDone = onboardingState.done
 
   val lastInteraction = remember { mutableLongStateOf(System.currentTimeMillis()) }
 
@@ -99,7 +100,7 @@ private fun AppRoot(
     when {
       activeUser == null -> LockRoot(shopName = shopName)
       // First-run wizard resumes until finished/skipped (task 11.2), covering the sell screen.
-      onboardingDone == false -> OnboardingWizard(viewModel = onboardingViewModel)
+      onboardingDone == false -> OnboardingRoot()
     }
   }
 

@@ -1,8 +1,6 @@
-package net.redngreen.easypos.ui.onboarding
+package net.redngreen.easypos.feature.onboarding.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,25 +26,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
 import net.redngreen.easypos.core.print.PrintState
-import net.redngreen.easypos.ui.settings.PrinterSetupViewModel
+import net.redngreen.easypos.feature.onboarding.domain.OnboardingStep
+import net.redngreen.easypos.feature.onboarding.ui.model.OnboardingAction
+import net.redngreen.easypos.feature.onboarding.ui.model.OnboardingState
+import net.redngreen.easypos.shared.asString
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * First-run wizard overlay (task 11.2). Covers the app until finished or
  * skipped; the sell screen sits underneath only once onboarding is done.
  */
 @Composable
-fun OnboardingWizard(
+fun OnboardingRoot(
     modifier: Modifier = Modifier,
-    viewModel: OnboardingViewModel = hiltViewModel(),
+    viewModel: OnboardingViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    OnboardingScreen(state = state, onAction = viewModel::onAction, modifier = modifier)
+}
+
+@Composable
+fun OnboardingScreen(
+    state: OnboardingState,
+    onAction: (OnboardingAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
@@ -59,23 +71,21 @@ fun OnboardingWizard(
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.weight(1f),
                 )
-                TextButton(onClick = viewModel::finish) { Text(stringResource(R.string.onboarding_skip)) }
+                TextButton(onClick = { onAction(OnboardingAction.Finish) }) {
+                    Text(stringResource(R.string.onboarding_skip))
+                }
             }
             HorizontalDivider()
 
             when (state.step) {
-                OnboardingStep.PROFILE -> ProfileStep(state, viewModel)
-                OnboardingStep.PRINTER -> PrinterStep(onContinue = viewModel::toProducts)
-                OnboardingStep.PRODUCTS -> ProductsStep(state, viewModel)
+                OnboardingStep.PROFILE -> ProfileStep(state, onAction)
+                OnboardingStep.PRINTER -> PrinterStep(state, onAction)
+                OnboardingStep.PRODUCTS -> ProductsStep(state, onAction)
             }
 
-            state.message?.let { msg ->
+            state.message?.let { message ->
                 Text(
-                    text = when (msg) {
-                        OnboardingViewModel.MESSAGE_NAME -> stringResource(R.string.onboarding_error_name)
-                        OnboardingViewModel.MESSAGE_PRODUCT -> stringResource(R.string.onboarding_error_product)
-                        else -> msg
-                    },
+                    text = message.asString(context),
                     color = MaterialTheme.colorScheme.error,
                 )
             }
@@ -84,30 +94,33 @@ fun OnboardingWizard(
 }
 
 @Composable
-private fun ProfileStep(state: OnboardingUiState, viewModel: OnboardingViewModel) {
+private fun ProfileStep(
+    state: OnboardingState,
+    onAction: (OnboardingAction) -> Unit,
+) {
     Text(stringResource(R.string.onboarding_profile_title), style = MaterialTheme.typography.titleMedium)
     OutlinedTextField(
         value = state.name,
-        onValueChange = viewModel::setName,
+        onValueChange = { onAction(OnboardingAction.SetName(it)) },
         label = { Text(stringResource(R.string.settings_name)) },
         singleLine = true,
         modifier = Modifier.fillMaxWidth(0.7f),
     )
     OutlinedTextField(
         value = state.address,
-        onValueChange = viewModel::setAddress,
+        onValueChange = { onAction(OnboardingAction.SetAddress(it)) },
         label = { Text(stringResource(R.string.settings_address)) },
         modifier = Modifier.fillMaxWidth(0.7f),
     )
     OutlinedTextField(
         value = state.phone,
-        onValueChange = viewModel::setPhone,
+        onValueChange = { onAction(OnboardingAction.SetPhone(it)) },
         label = { Text(stringResource(R.string.settings_phone)) },
         singleLine = true,
         modifier = Modifier.fillMaxWidth(0.7f),
     )
     Button(
-        onClick = viewModel::saveProfileNext,
+        onClick = { onAction(OnboardingAction.SaveProfileNext) },
         enabled = !state.saving,
         modifier = Modifier.fillMaxWidth(0.4f),
     ) { Text(stringResource(R.string.onboarding_continue)) }
@@ -115,25 +128,23 @@ private fun ProfileStep(state: OnboardingUiState, viewModel: OnboardingViewModel
 
 @Composable
 private fun PrinterStep(
-    onContinue: () -> Unit,
-    viewModel: PrinterSetupViewModel = hiltViewModel(),
+    state: OnboardingState,
+    onAction: (OnboardingAction) -> Unit,
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
     Text(stringResource(R.string.onboarding_printer_title), style = MaterialTheme.typography.titleMedium)
     if (!state.bluetoothAvailable) {
         Text(stringResource(R.string.printer_bt_unavailable), color = MaterialTheme.colorScheme.error)
     }
-    if (state.devices.isEmpty()) {
+    if (state.printers.isEmpty()) {
         Text(
             stringResource(R.string.printer_no_devices),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     } else {
-        state.devices.forEach { device ->
-            val selected = state.mac == device.address
+        state.printers.forEach { device ->
+            val selected = state.printerMac == device.address
             Card(
-                onClick = { viewModel.select(device.address) },
+                onClick = { onAction(OnboardingAction.SelectPrinter(device.address)) },
                 modifier = Modifier.fillMaxWidth(0.7f),
             ) {
                 Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -147,17 +158,20 @@ private fun PrinterStep(
     }
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         FilterChip(
-            selected = state.widthMm < 80,
-            onClick = { viewModel.setWidth(58) },
+            selected = state.printerWidthMm < 80,
+            onClick = { onAction(OnboardingAction.SetPrinterWidth(58)) },
             label = { Text(stringResource(R.string.printer_width_58)) },
         )
         FilterChip(
-            selected = state.widthMm >= 80,
-            onClick = { viewModel.setWidth(80) },
+            selected = state.printerWidthMm >= 80,
+            onClick = { onAction(OnboardingAction.SetPrinterWidth(80)) },
             label = { Text(stringResource(R.string.printer_width_80)) },
         )
     }
-    OutlinedButton(onClick = viewModel::testPrint, enabled = state.mac != null) {
+    OutlinedButton(
+        onClick = { onAction(OnboardingAction.TestPrint) },
+        enabled = state.printerMac != null,
+    ) {
         Text(stringResource(R.string.printer_test))
     }
     when (val ps = state.printState) {
@@ -168,13 +182,19 @@ private fun PrinterStep(
         )
         PrintState.Idle -> Unit
     }
-    Button(onClick = onContinue, modifier = Modifier.fillMaxWidth(0.4f)) {
+    Button(
+        onClick = { onAction(OnboardingAction.ToProducts) },
+        modifier = Modifier.fillMaxWidth(0.4f),
+    ) {
         Text(stringResource(R.string.onboarding_continue))
     }
 }
 
 @Composable
-private fun ProductsStep(state: OnboardingUiState, viewModel: OnboardingViewModel) {
+private fun ProductsStep(
+    state: OnboardingState,
+    onAction: (OnboardingAction) -> Unit,
+) {
     Text(stringResource(R.string.onboarding_products_title), style = MaterialTheme.typography.titleMedium)
     Text(
         stringResource(R.string.onboarding_products_hint),
@@ -184,20 +204,19 @@ private fun ProductsStep(state: OnboardingUiState, viewModel: OnboardingViewMode
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
             value = state.productName,
-            onValueChange = viewModel::setProductName,
+            onValueChange = { onAction(OnboardingAction.SetProductName(it)) },
             label = { Text(stringResource(R.string.quick_sell_name_hint)) },
             singleLine = true,
             modifier = Modifier.weight(1f),
         )
         OutlinedTextField(
             value = state.productPrice,
-            onValueChange = viewModel::setProductPrice,
+            onValueChange = { onAction(OnboardingAction.SetProductPrice(it)) },
             label = { Text(stringResource(R.string.quick_sell_price_hint)) },
-            singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.weight(0.6f),
         )
-        OutlinedButton(onClick = viewModel::addProduct) {
+        OutlinedButton(onClick = { onAction(OnboardingAction.AddProduct) }) {
             Text(stringResource(R.string.onboarding_add_product))
         }
     }
@@ -208,7 +227,10 @@ private fun ProductsStep(state: OnboardingUiState, viewModel: OnboardingViewMode
         )
     }
     Spacer(Modifier.height(8.dp))
-    Button(onClick = viewModel::finish, modifier = Modifier.fillMaxWidth(0.4f)) {
+    Button(
+        onClick = { onAction(OnboardingAction.Finish) },
+        modifier = Modifier.fillMaxWidth(0.4f),
+    ) {
         Text(stringResource(R.string.onboarding_finish))
     }
 }
