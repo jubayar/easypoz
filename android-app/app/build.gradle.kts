@@ -52,6 +52,10 @@ dependencies {
   ksp(libs.hilt.compiler)
   implementation(libs.hilt.navigation.compose)
 
+  // Koin alongside Hilt during the restructure (3.1); Hilt removed in 6.1.
+  implementation(libs.koin.android)
+  implementation(libs.koin.androidx.compose)
+
   val composeBom = platform(libs.androidx.compose.bom)
   implementation(composeBom)
   androidTestImplementation(composeBom)

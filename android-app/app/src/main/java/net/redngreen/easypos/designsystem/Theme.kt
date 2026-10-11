@@ -1,4 +1,4 @@
-package net.redngreen.easypos.theme
+package net.redngreen.easypos.designsystem
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme

@@ -26,7 +26,7 @@ import android.graphics.Color as AndroidColor
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import net.redngreen.easypos.theme.EasyPOSTheme
+import net.redngreen.easypos.designsystem.EasyPOSTheme
 import net.redngreen.easypos.ui.lock.LockScreen
 import net.redngreen.easypos.ui.onboarding.OnboardingViewModel
 import net.redngreen.easypos.ui.onboarding.OnboardingWizard

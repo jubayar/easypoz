@@ -53,7 +53,7 @@ import net.redngreen.easypos.core.sync.SyncPhase
 import net.redngreen.easypos.core.sync.SyncStatus
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role
-import net.redngreen.easypos.theme.ExtendedTheme
+import net.redngreen.easypos.designsystem.ExtendedTheme
 import net.redngreen.easypos.ui.lock.roleLabel
 import net.redngreen.easypos.ui.session.SessionViewModel
 

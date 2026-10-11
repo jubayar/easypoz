@@ -1,4 +1,4 @@
-package net.redngreen.easypos.ui.common
+package net.redngreen.easypos.designsystem
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

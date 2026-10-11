@@ -65,7 +65,7 @@ import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.launch
 import net.redngreen.easypos.R
 import net.redngreen.easypos.core.money.MoneyFormatter
-import net.redngreen.easypos.theme.ExtendedTheme
+import net.redngreen.easypos.designsystem.ExtendedTheme
 
 private val HISTORY_TIME = DateTimeFormatter.ofPattern("d MMM HH:mm")
 

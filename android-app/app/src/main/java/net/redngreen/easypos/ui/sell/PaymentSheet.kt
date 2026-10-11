@@ -57,9 +57,9 @@ import java.time.format.DateTimeFormatter
 import net.redngreen.easypos.R
 import net.redngreen.easypos.core.database.entity.PaymentType
 import net.redngreen.easypos.core.money.MoneyFormatter
-import net.redngreen.easypos.theme.ExtendedTheme
-import net.redngreen.easypos.ui.common.PosKeypad
-import net.redngreen.easypos.ui.common.appendDigit
+import net.redngreen.easypos.designsystem.ExtendedTheme
+import net.redngreen.easypos.designsystem.PosKeypad
+import net.redngreen.easypos.designsystem.appendDigit
 
 private val PAYMENT_TIME = DateTimeFormatter.ofPattern("d MMM yyyy · HH:mm")
 

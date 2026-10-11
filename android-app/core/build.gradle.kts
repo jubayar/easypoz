@@ -54,6 +54,10 @@ dependencies {
     // FileProvider-based PDF sharing moved here from :app (restructure 2.6).
     implementation(libs.androidx.core.ktx)
 
+    // Koin module definitions for core infrastructure (restructure 3.1).
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+
     // Background sync triggers (task 12.3): periodic work, connectivity-gated.
     implementation(libs.androidx.work.runtime.ktx)
 

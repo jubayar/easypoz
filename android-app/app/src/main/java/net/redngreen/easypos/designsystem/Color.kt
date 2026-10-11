@@ -1,4 +1,4 @@
-package net.redngreen.easypos.theme
+package net.redngreen.easypos.designsystem
 
 import androidx.compose.ui.graphics.Color
 

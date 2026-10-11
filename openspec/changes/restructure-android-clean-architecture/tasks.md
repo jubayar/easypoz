@@ -15,11 +15,11 @@
 
 ## 3. Koin bootstrap (coexists with Hilt)
 
-- [ ] 3.1 Add Koin dependencies (core, android, compose) to `:app`/`:core`; define core Koin modules (`networkModule`, `databaseModule`, `syncModule`, `sessionModule`) with `singleOf`/`bind`
-- [ ] 3.2 Add `startKoin` to `EasyPosApp` assembling core modules alongside existing Hilt
-- [ ] 3.3 Create `app/shared`: `UiText`, `DataError.toUiText()` (EN + BM strings), `ObserveAsEvents`
-- [ ] 3.4 Move theme + shared composables (`PosKeypad`, common chips/sections) into `app/designsystem`
-- [ ] 3.5 Add the architecture guard test (design D10): no cross-feature imports outside `domain`, no Compose in `:core`, `feature/*/domain` has no Android framework imports
+- [x] 3.1 Add Koin dependencies (core, android, compose) to `:app`/`:core`; define core Koin modules (`networkModule`, `databaseModule`, `syncModule`, `sessionModule`) with `singleOf`/`bind`
+- [x] 3.2 Add `startKoin` to `EasyPosApp` assembling core modules alongside existing Hilt
+- [x] 3.3 Create `app/shared`: `UiText`, `DataError.toUiText()` (EN + BM strings), `ObserveAsEvents`
+- [x] 3.4 Move theme + shared composables (`PosKeypad`, common chips/sections) into `app/designsystem`
+- [x] 3.5 Add the architecture guard test (design D10): no cross-feature imports outside `domain`, no Compose in `:core`, `feature/*/domain` has no Android framework imports
 
 ## 4. Feature migrations (dependency order; each keeps app building, removes that feature's Hilt usage, registers Koin modules)
 

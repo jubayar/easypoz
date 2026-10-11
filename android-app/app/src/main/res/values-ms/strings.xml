@@ -455,4 +455,11 @@
     <string name="lock_pick_profile">Pilih profil anda dan masukkan PIN 4-digit</string>
     <string name="lock_backspace">Padam</string>
     <string name="lock_forgot_pin">Lupa PIN? Hubungi Penyelia Kedai</string>
+    <string name="error_no_internet">Tiada sambungan internet</string>
+    <string name="error_request_timeout">Permintaan tamat masa</string>
+    <string name="error_unauthorized">Sesi telah tamat — log masuk semula</string>
+    <string name="error_server">Ralat pelayan — cuba lagi kemudian</string>
+    <string name="error_serialization">Respons pelayan tidak sah</string>
+    <string name="error_disk_full">Storan penuh</string>
+    <string name="error_not_found">Tidak dijumpai</string>
 </resources>

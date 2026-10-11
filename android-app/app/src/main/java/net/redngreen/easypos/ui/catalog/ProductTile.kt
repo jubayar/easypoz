@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import net.redngreen.easypos.R
 import net.redngreen.easypos.core.database.entity.Product
 import net.redngreen.easypos.core.money.MoneyFormatter
-import net.redngreen.easypos.theme.EasyPOSTheme
+import net.redngreen.easypos.designsystem.EasyPOSTheme
 
 /**
  * Product tile (product-catalog spec): photo or a generated identity

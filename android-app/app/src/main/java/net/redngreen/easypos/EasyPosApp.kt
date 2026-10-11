@@ -5,9 +5,17 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import net.redngreen.easypos.core.di.bridgeRepoModule
+import net.redngreen.easypos.core.di.databaseModule
+import net.redngreen.easypos.core.di.networkModule
+import net.redngreen.easypos.core.di.printModule
+import net.redngreen.easypos.core.di.sessionModule
+import net.redngreen.easypos.core.di.syncModule
+import net.redngreen.easypos.core.network.TokenStore
 import net.redngreen.easypos.core.sync.SyncScheduler
 import net.redngreen.easypos.core.sync.SyncStatusRepository
-import net.redngreen.easypos.core.network.TokenStore
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 @HiltAndroidApp
 class EasyPosApp : Application() {
@@ -22,6 +30,17 @@ class EasyPosApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidContext(this@EasyPosApp)
+            modules(
+                networkModule,
+                databaseModule,
+                syncModule,
+                sessionModule,
+                printModule,
+                bridgeRepoModule,
+            )
+        }
         // Background sync triggers (task 12.3): never on the sell path.
         syncScheduler.ensurePeriodic()
         syncScheduler.startConnectivityObserver()

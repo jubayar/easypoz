@@ -455,4 +455,11 @@
     <string name="lock_pick_profile">Pick your profile and enter your 4-digit PIN</string>
     <string name="lock_backspace">Clear</string>
     <string name="lock_forgot_pin">Forgot PIN? Contact the shop supervisor</string>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_request_timeout">Request timed out</string>
+    <string name="error_unauthorized">Session expired — sign in again</string>
+    <string name="error_server">Server error — try again later</string>
+    <string name="error_serialization">Invalid server response</string>
+    <string name="error_disk_full">Storage is full</string>
+    <string name="error_not_found">Not found</string>
 </resources>
