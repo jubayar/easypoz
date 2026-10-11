@@ -1,0 +1,6 @@
+name,barcode,category,cost,price,active,stock,location
+Milo Activ-Go 1kg,8886467920123,DRINKS,9.50,12.00,true,18,Rak A-03
+Milo Activ-Go 500g,8886467920130,DRINKS,5.10,6.50,true,24,Rak A-03
+Plastic bag (kecil),,UMUM,0.10,0.30,yes,500,
+Dabur Red Paste 200g,8901012000123,TOOTHPASTE,4.20,5.90,true,24,Rak B-11
+Mamee Double Decker,8887003100123,SNACKS,0.90,1.50,true,60,Rak C-02

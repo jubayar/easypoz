@@ -1,0 +1,465 @@
+<resources>
+    <string name="app_name">EasyPOS</string>
+
+    <!-- Sell screen -->
+    <string name="sell_title">Jualan</string>
+    <string name="search_hint">Imbas barcode atau cari produk…</string>
+    <string name="cart_empty">Troli kosong — imbas atau sentuh produk</string>
+    <string name="cart_subtotal">Subjumlah</string>
+    <string name="cart_total">Jumlah</string>
+    <string name="action_pay">Bayar</string>
+    <string name="action_hold">Tangguh</string>
+    <string name="action_clear">Kosongkan troli</string>
+    <string name="action_quick_sell">Jual pantas</string>
+    <string name="barcode_not_found">Tiada produk dengan barcode ini</string>
+    <string name="barcode_not_found_create">Cipta produk</string>
+    <string name="barcode_not_found_quick_sell">Jual pantas sahaja</string>
+    <string name="stock_on_hand">Baki %1$d</string>
+    <string name="stock_low">Rendah</string>
+
+    <!-- Payment -->
+    <string name="payment_title">Bayaran</string>
+    <string name="payment_cash_tendered">Tunai diterima</string>
+    <string name="payment_change">Baki bayaran balik</string>
+    <string name="payment_under_tender">Baki tertunggak: %1$s</string>
+    <string name="payment_confirm">Sahkan bayaran</string>
+
+    <!-- Navigation -->
+    <string name="nav_sell">Jualan</string>
+    <string name="nav_products">Produk</string>
+    <string name="nav_stock">Stok</string>
+    <string name="nav_cash">Tunai</string>
+    <string name="nav_history">Sejarah</string>
+    <string name="nav_day_summary">Ringkasan Hari</string>
+    <string name="nav_settings">Tetapan</string>
+
+    <!-- Sync status -->
+    <string name="sync_synced">Disegerak</string>
+    <string name="sync_syncing">Menyegerak…</string>
+    <string name="sync_offline_pending">Luar talian · %1$d tertunda</string>
+    <string name="sync_error">Ralat segerakan</string>
+    <string name="sync_setup">Sediakan segerakan</string>
+    <string name="sync_pending">%1$d tertunda</string>
+    <string name="sync_pending_label">Menunggu muat naik</string>
+    <string name="sync_offline_label">Luar talian</string>
+
+    <!-- Sync & account -->
+    <string name="sync_title">Segerakan &amp; akaun</string>
+    <string name="sync_shop_id">ID Kedai: %1$s</string>
+    <string name="sync_not_signed_in">Belum daftar masuk — semua data kekal dalam tablet ini.</string>
+    <string name="sync_restore_hint">Mendaftar masuk akan memulihkan keseluruhan data kedai dari awan dan menjadikan tablet ini peranti aktif.</string>
+    <string name="sync_identifier_label">Telefon atau e-mel</string>
+    <string name="sync_send_code">Hantar kod</string>
+    <string name="sync_code_label">Kod 6 digit</string>
+    <string name="sync_dev_code">Kod pembangun: %1$s</string>
+    <string name="sync_sign_in">Daftar masuk &amp; pulihkan</string>
+    <string name="sync_now">Segerakkan sekarang</string>
+    <string name="sync_sign_out">Daftar keluar</string>
+    <string name="sync_conflicts_title">Konflik segerakan</string>
+    <string name="sync_conflicts_empty">Tiada konflik</string>
+    <string name="sync_conflict_row">%1$s · %2$s</string>
+    <string name="sync_now_done">Segerakan selesai — %1$d dihantar, %2$d diterima</string>
+    <string name="sync_restored">Memulihkan %1$d perubahan</string>
+    <string name="sync_send_failed">Gagal menghantar kod — cuba lagi</string>
+
+    <!-- Settings -->
+    <string name="settings_language">Bahasa</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_bahasa">Bahasa Melayu</string>
+
+    <!-- User access control -->
+    <string name="lock_title">Terkunci</string>
+    <string name="lock_enter_pin">Masukkan PIN untuk %1$s</string>
+    <string name="lock_wrong_pin">PIN salah</string>
+    <string name="lock_cancel">Batal</string>
+    <string name="lock_unlock">Buka</string>
+
+    <string name="setup_title">Cipta akaun Admin anda</string>
+    <string name="setup_name_hint">Nama anda</string>
+    <string name="setup_pin_hint">PIN (4–6 digit)</string>
+    <string name="setup_create">Cipta Admin</string>
+
+    <string name="users_title">Pengguna</string>
+    <string name="users_you">Anda</string>
+    <string name="user_add">Tambah pengguna</string>
+    <string name="user_create_title">Pengguna baharu</string>
+    <string name="user_edit_title">Ubah suai pengguna</string>
+    <string name="user_name_label">Nama</string>
+    <string name="user_role_label">Peranan</string>
+    <string name="user_pin_label">PIN (4–6 digit)</string>
+    <string name="user_pin_new_label">PIN baharu (kosongkan untuk kekal semasa)</string>
+    <string name="user_active_label">Aktif</string>
+    <string name="user_inactive">Tidak aktif</string>
+    <string name="user_save">Simpan</string>
+
+    <string name="role_admin">Admin</string>
+    <string name="role_manager">Pengurus</string>
+    <string name="role_cashier">Juruwang</string>
+
+    <string name="access_denied">Anda tidak mempunyai kebenaran untuk tindakan ini</string>
+
+    <string name="action_back">Kembali</string>
+    <string name="action_lock">Kunci</string>
+    <string name="action_switch_user">Tukar pengguna</string>
+
+    <string name="error_pin_invalid">PIN mesti 4–6 digit</string>
+    <string name="error_name_required">Nama diperlukan</string>
+    <string name="error_last_admin">Tidak boleh menyahaktif atau menurunkan Admin aktif terakhir</string>
+    <string name="error_unknown">Sesuatu tidak kena — cuba lagi</string>
+
+    <string name="activity_log_title">Log aktiviti</string>
+    <string name="activity_log_unknown_user">Tidak diketahui</string>
+    <string name="activity_log_type_login">Log masuk</string>
+    <string name="activity_log_type_login_failed">PIN ditolak</string>
+    <string name="activity_log_type_lock">Terkunci</string>
+    <string name="activity_log_type_action">Tindakan</string>
+    <string name="activity_log_type_denial">Ditolak</string>
+
+    <!-- Product catalog -->
+    <string name="products_title">Produk</string>
+    <string name="product_add">Tambah produk</string>
+    <string name="product_create_title">Produk baharu</string>
+    <string name="product_edit_title">Ubah suai produk</string>
+    <string name="product_category_label">Kategori</string>
+    <string name="product_barcode_label">Barcode</string>
+    <string name="product_barcode_hint">Unik — imbas atau taip</string>
+    <string name="product_sku_label">SKU</string>
+    <string name="product_cost_label">Kos (RM)</string>
+    <string name="product_price_label">Harga jualan (RM)</string>
+    <string name="product_margin_preview">Margin: %1$s · %2$s</string>
+    <string name="product_initial_stock_label">Stok awal (pilihan)</string>
+    <string name="product_emoji_label">Emoji</string>
+    <string name="product_location_label">Lokasi rak</string>
+    <string name="product_location_hint">cth. Rak A-03, Chiller 2</string>
+    <string name="product_active_sellable">Aktif — boleh dijual dan dilihat</string>
+    <string name="product_inactive_hidden">Tidak aktif — disembunyi daripada grid dan imbasan</string>
+    <string name="products_count">Menunjukkan %1$d daripada %2$d produk</string>
+    <string name="catalog_search_hint">Cari nama, barcode, atau SKU</string>
+    <string name="stock_on_hand_low">Baki %1$d · Rendah</string>
+
+    <string name="categories_title">Kategori</string>
+    <string name="categories_add">Tambah kategori</string>
+    <string name="categories_rename">Tukar nama kategori</string>
+    <string name="categories_name_label">Nama</string>
+    <string name="categories_apply_order">Simpan susunan</string>
+    <string name="categories_move_up">Naik</string>
+    <string name="categories_move_down">Turun</string>
+    <string name="action_rename">Tukar nama</string>
+    <string name="action_more">Lagi</string>
+    <string name="csv_category_default">Tanpa Kategori</string>
+
+    <string name="csv_import_title">Import CSV</string>
+    <string name="csv_export_title">Eksport CSV</string>
+    <string name="csv_import_intro">Import produk daripada fail CSV (eksport Aronium boleh diguna terus). Baris bermasalah dilaporkan dan tidak menggugat import.</string>
+    <string name="csv_import_pick">Pilih fail CSV</string>
+    <string name="csv_import_format_error">Fail tidak dapat dibaca: %1$s</string>
+    <string name="csv_import_preview">%1$d baris sedia · %2$d baris bermasalah</string>
+    <string name="csv_import_row_failure">Baris %1$d: %2$s</string>
+    <string name="csv_import_apply">Import %1$d baris</string>
+    <string name="csv_import_choose_other">Pilih fail lain</string>
+    <string name="csv_import_summary">%1$d dicipta · %2$d dikemas kini · %3$d gagal</string>
+    <string name="csv_import_failed_rows">Baris gagal</string>
+    <string name="csv_import_retry_failed">Cuba semula baris gagal</string>
+    <string name="csv_import_all_done">Semua baris berjaya diimport.</string>
+    <string name="csv_import_another">Import fail lain</string>
+
+    <string name="error_barcode_taken">Barcode ini telah digunakan oleh produk lain</string>
+    <string name="error_price_invalid">Masukkan harga jualan yang sah</string>
+    <string name="error_cost_invalid">Masukkan kos yang sah</string>
+    <string name="error_stock_invalid">Stok mesti nombor bulat</string>
+
+    <!-- Sales terminal -->
+    <string name="category_all">Semua</string>
+    <string name="search_no_results">Tiada produk sepadan</string>
+    <string name="grid_empty_hint">Belum ada produk — tambah atau import dari menu Produk</string>
+    <string name="cart_title">Troli (%1$d)</string>
+    <string name="clear_cart_confirm">Kosongkan troli? Tiada jualan akan direkodkan.</string>
+    <string name="clear_cart_yes">Kosongkan</string>
+    <string name="sale_completed">Jualan #%1$d selesai</string>
+    <string name="barcode_not_found_detail">Tiada produk dengan barcode %1$s</string>
+    <string name="quick_sell_name_hint">Nama barang</string>
+    <string name="quick_sell_price_hint">Harga (RM)</string>
+    <string name="quick_sell_add">Tambah ke troli</string>
+    <string name="held_default_label">Ditangguh</string>
+    <string name="held_label_hint">Label (pilihan)</string>
+    <string name="void_line_title">Batalkan baris</string>
+    <string name="void_reason_hint">Sebab (wajib)</string>
+    <string name="void_line_confirm">Batalkan</string>
+    <string name="void_line_short">Batal</string>
+
+    <!-- Sales history -->
+    <string name="history_title">Sejarah jualan</string>
+    <string name="history_today">Hari ini</string>
+    <string name="history_yesterday">Semalam</string>
+    <string name="history_pick_date">Pilih tarikh</string>
+    <string name="history_empty">Tiada jualan pada hari ini</string>
+    <string name="history_row_summary">%1$d barang · %2$s</string>
+    <string name="history_detail_title">Jualan #%1$d</string>
+    <string name="history_payment_type">Bayaran</string>
+    <string name="history_cashier">Juruwang</string>
+    <string name="history_reprint">Cetak semula</string>
+    <string name="history_share">Kongsi</string>
+
+    <string name="payment_merchant_qr">QR kedai</string>
+    <string name="payment_merchant_qr_hint">Sahkan bayaran diterima untuk melengkapkan jualan</string>
+
+    <!-- Stock management -->
+    <string name="stock_title">Stok</string>
+    <string name="stock_filter_all">Semua</string>
+    <string name="stock_filter_low">Rendah</string>
+    <string name="stock_filter_zero">Kosong</string>
+    <string name="stock_filter_negative">Negatif</string>
+    <string name="stock_filter_count">%1$s (%2$d)</string>
+    <string name="stock_empty">Tiada produk</string>
+    <string name="stock_current_on_hand">Baki: %1$d</string>
+    <string name="stock_valuation_cost">Nilai pada kos</string>
+    <string name="stock_valuation_sale">Nilai pada harga jualan</string>
+    <string name="stock_valuation_margin">Margin</string>
+    <string name="stock_valuation_margin_value">%1$s · %2$s</string>
+    <string name="stock_threshold_label">Ambang stok rendah</string>
+    <string name="stock_threshold_save">Simpan ambang</string>
+    <string name="stock_adjust_title">Laras stok</string>
+    <string name="stock_adjust_mode_set">Tetapkan kiraan</string>
+    <string name="stock_adjust_mode_receive">Terima</string>
+    <string name="stock_adjust_mode_remove">Keluarkan</string>
+    <string name="stock_adjust_amount">Kuantiti</string>
+    <string name="stock_adjust_reason">Sebab (wajib)</string>
+    <string name="stock_adjust_apply">Guna</string>
+    <string name="stock_reason_count">Kiraan Fizikal</string>
+    <string name="stock_reason_damaged">Rosak</string>
+    <string name="stock_reason_new_stock">Stok Baharu</string>
+    <string name="stock_history_title">Sejarah stok</string>
+    <string name="stock_history_empty">Belum ada perubahan stok</string>
+    <string name="stock_history_change">%1$d → %2$d</string>
+    <string name="stock_reason_sale">Jualan</string>
+    <string name="stock_reason_adjust">Larasan</string>
+    <string name="stock_reason_import">Import</string>
+    <string name="stock_error_amount">Masukkan kuantiti yang sah</string>
+    <string name="stock_error_reason">Masukkan sebab</string>
+    <string name="action_adjust">Laras</string>
+    <string name="action_close">Tutup</string>
+
+    <!-- Cash management -->
+    <string name="cash_title">Tunai</string>
+    <string name="cash_expected_drawer">Duit laci (jangkaan)</string>
+    <string name="cash_expected_hint">Belum dikira — jualan tunai + masuk − keluar</string>
+    <string name="cash_in">Tunai masuk</string>
+    <string name="cash_out">Tunai keluar</string>
+    <string name="cash_amount">Jumlah (RM)</string>
+    <string name="cash_reason">Sebab (wajib)</string>
+    <string name="cash_reason_float">Tambah modal</string>
+    <string name="cash_reason_restock">Stok semula pembekal</string>
+    <string name="cash_reason_ewallet">Tunai keluar e-dompet</string>
+    <string name="cash_reason_petty">Wang runcit</string>
+    <string name="cash_save">Rekod entri</string>
+    <string name="cash_log_title">Log tunai</string>
+    <string name="cash_log_empty">Belum ada rekod tunai</string>
+    <string name="cash_error_amount">Masukkan jumlah yang sah</string>
+    <string name="cash_error_reason">Sebab diperlukan</string>
+
+    <!-- Printer & printing -->
+    <string name="printer_title">Pencetak</string>
+    <string name="printer_bt_unavailable">Bluetooth tidak tersedia pada peranti ini</string>
+    <string name="printer_devices_title">Pencetak berpasangan</string>
+    <string name="printer_no_devices">Tiada pencetak berpasangan — pasangkan dalam tetapan Bluetooth</string>
+    <string name="printer_pair">Pasang pencetak</string>
+    <string name="printer_width_title">Lebar kertas</string>
+    <string name="printer_width_58">58mm</string>
+    <string name="printer_width_80">80mm</string>
+    <string name="printer_drawer_kick">Buka laci tunai pada jualan tunai</string>
+    <string name="printer_test">Cetak ujian</string>
+    <string name="printer_printing">Mencetak…</string>
+    <string name="printer_retry">Cuba semula</string>
+    <string name="printer_error">Pencetak tidak dapat dihubungi</string>
+    <string name="printer_selected">Dipilih</string>
+    <string name="print_failed_retry">Cetakan gagal — ketik untuk cuba semula</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Tetapan</string>
+    <string name="settings_shop_profile">Profil kedai</string>
+    <string name="settings_name">Nama kedai</string>
+    <string name="settings_address">Alamat</string>
+    <string name="settings_phone">Telefon</string>
+    <string name="settings_logo">Logo</string>
+    <string name="settings_receipt_branding">Jenama resit</string>
+    <string name="settings_receipt_header">Baris pengepala</string>
+    <string name="settings_receipt_footer">Mesej pengaki</string>
+    <string name="settings_preview">Pratonton</string>
+    <string name="settings_security">Keselamatan &amp; laci</string>
+    <string name="settings_idle_lock">Kunci auto selepas (minit)</string>
+    <string name="settings_merchant_qr">QR kedai (DuitNow)</string>
+    <string name="settings_save">Simpan</string>
+    <string name="settings_saved">Disimpan</string>
+    <string name="settings_choose_image">Pilih imej</string>
+    <string name="settings_remove_image">Buang</string>
+    <string name="settings_error_name">Nama kedai diperlukan</string>
+
+    <!-- Payment type manager -->
+    <string name="payment_types_title">Jenis bayaran</string>
+    <string name="payment_add">Tambah jenis</string>
+    <string name="payment_name">Nama</string>
+    <string name="payment_kind_cash">Tunai</string>
+    <string name="payment_kind_other">Bukan tunai</string>
+
+    <!-- First-run onboarding wizard -->
+    <string name="onboarding_title">Selamat datang ke EasyPOS</string>
+    <string name="onboarding_skip">Langkau buat masa ini</string>
+    <string name="onboarding_continue">Teruskan</string>
+    <string name="onboarding_finish">Selesai</string>
+    <string name="onboarding_profile_title">Profil kedai</string>
+    <string name="onboarding_printer_title">Pencetak (pilihan)</string>
+    <string name="onboarding_products_title">Produk (pilihan)</string>
+    <string name="onboarding_products_hint">Tambah beberapa produk sekarang, atau import CSV kemudian dari Produk → Import.</string>
+    <string name="onboarding_add_product">Tambah produk</string>
+    <string name="onboarding_products_added">%1$d produk ditambah</string>
+    <string name="onboarding_error_name">Nama kedai diperlukan</string>
+    <string name="onboarding_error_product">Masukkan nama dan harga produk</string>
+
+    <!-- Backup & restore -->
+    <string name="backup_title">Sandaran</string>
+    <string name="backup_export">Eksport sandaran</string>
+    <string name="backup_restore">Pulih dari fail</string>
+    <string name="backup_export_hint">Simpan satu fail dengan semua data kedai (tanpa PIN atau token). Pemulihan menggantikan data setempat.</string>
+    <string name="backup_restored">Dipulihkan %1$d produk · %2$d jualan · %3$d pengguna</string>
+    <string name="backup_error">Sandaran gagal: %1$s</string>
+    <string name="settings_backup">Sandaran &amp; pemulihan</string>
+
+    <!-- Stitch design update: sell / payment -->
+    <string name="category_chip_count">%1$s (%2$d)</string>
+    <string name="action_custom_item">Tersuai</string>
+    <string name="sell_scanner_ready">Pengimbas sedia</string>
+    <string name="cart_walk_in">Pelanggan Am (Walk-in)</string>
+    <string name="cart_unit_price">%1$s / unit</string>
+    <string name="payment_tender_exact_short">Tepat</string>
+    <string name="sell_sst_zero">SST / Cukai (0%%)</string>
+    <string name="cart_total_due">Jumlah Terkumpul</string>
+    <string name="cart_items_count">%1$d barang dibeli</string>
+    <string name="pay_duitnow">DuitNow</string>
+    <string name="action_pay_amount">Bayar %1$s</string>
+    <string name="keypad_backspace">Padam</string>
+    <string name="payment_checkout_total">Jumlah Bayaran</string>
+    <string name="payment_sst_included">SST 0%% termasuk</string>
+    <string name="payment_drawer_ready">Laci tunai sedia</string>
+    <string name="payment_items_line">%1$d barang · %2$s</string>
+    <string name="payment_method_instant_drawer">Laci automatik</string>
+    <string name="payment_method_instant_pay">Bayar segera</string>
+    <string name="payment_tendered_label">Diterima</string>
+    <string name="payment_reset">Set semula</string>
+    <string name="payment_add_rm">+ RM %1$d</string>
+    <string name="payment_tender_exact">Tepat %1$s</string>
+    <string name="payment_tender_change_hint">RM %1$s (+%2$s)</string>
+    <string name="payment_change_due">Baki</string>
+    <string name="payment_complete_change">Selesaikan Jualan (baki %1$s)</string>
+    <string name="payment_confirm_paid">Sahkan Dibayar</string>
+    <string name="payment_return">Kembali ke Kaunter</string>
+    <string name="payment_success_title">Pembayaran Berjaya!</string>
+    <string name="payment_receipt_no">Resit #%1$d</string>
+    <string name="payment_success_total_paid">Jumlah Dibayar</string>
+    <string name="payment_success_change_dispensed">Baki Dikembalikan</string>
+    <string name="payment_success_method">Kaedah Bayaran</string>
+    <string name="payment_next_customer">Pelanggan Seterusnya</string>
+
+    <!-- Quick price edit (task 6.7) -->
+    <string name="quickedit_auth_title">Kebenaran Pengurus</string>
+    <string name="quickedit_auth_hint">Menukar harga %1$s memerlukan PIN Pengurus atau Admin</string>
+    <string name="quickedit_auth_pin">PIN Pengurus</string>
+    <string name="quickedit_auth_confirm">Sahkan</string>
+    <string name="quickedit_authorized_badge">Kebenaran Disahkan: %1$s (%2$s)</string>
+    <string name="quickedit_sale_price">HARGA JUAL</string>
+    <string name="quickedit_cost">KOS SEUNIT</string>
+    <string name="quickedit_old_price">Lama: %1$s</string>
+    <string name="quickedit_delta_up">+%1$s dari harga lama</string>
+    <string name="quickedit_delta_down">−%1$s dari harga lama</string>
+    <string name="quickedit_reset">Reset %1$s</string>
+    <string name="quickedit_margin">Untung Bersih: %1$s (%2$s%%)</string>
+    <string name="quickedit_margin_healthy">Sihat</string>
+    <string name="quickedit_margin_thin">Rendah</string>
+    <string name="quickedit_save">Simpan Harga Baharu</string>
+    <string name="quickedit_footnote">Kemas kini serta-merta · Rekod diaudit atas nama %1$s · Selamat luar talian</string>
+
+    <!-- Stitch design update: stock -->
+    <string name="stock_title_subtitle">Pengurusan Stok</string>
+    <string name="stock_movement_today">Pergerakan Hari Ini</string>
+    <string name="stock_movement_value">+%1$d Masuk / %2$d Keluar</string>
+    <string name="stock_segment_all">Semua Produk</string>
+    <string name="stock_showing_of">Memaparkan %1$d daripada %2$d item berdaftar</string>
+    <string name="stock_status_ok">Baki Sihat</string>
+    <string name="stock_status_low">Paras Amaran</string>
+    <string name="stock_status_out">Kehabisan Stok</string>
+    <string name="stock_status_negative">Stok Negatif</string>
+    <string name="stock_on_hand_units">%1$d unit</string>
+    <string name="stock_row_sku">SKU: %1$s</string>
+    <string name="stock_row_edit">Edit</string>
+    <string name="stock_valuation_title">Jumlah Nilai Inventori</string>
+    <string name="stock_export_csv">Eksport CSV</string>
+
+    <!-- Stitch design update: cash -->
+    <string name="cash_title_subtitle">Log Laci &amp; Tunai Runcit</string>
+    <string name="cash_new_entry_title">Entri Laci Baharu</string>
+    <string name="cash_total_in_today">Masuk hari ini: %1$s</string>
+    <string name="cash_total_out_today">Keluar hari ini: %1$s</string>
+    <string name="cash_reason_custom_hint">Sebab / nota rujukan</string>
+    <string name="cash_record_in">Rekod Tunai Masuk (%1$s)</string>
+    <string name="cash_record_out">Rekod Tunai Keluar (%1$s)</string>
+    <string name="cash_cashier_in_charge">Juruwang Bertugas: %1$s</string>
+    <string name="cash_log_subtitle">Lejar masa nyata untuk laci runcit</string>
+    <string name="cash_log_showing">Memaparkan %1$d entri terkini</string>
+
+    <!-- Stitch design update: day summary / Z-report (tasks 9.3 + 9.5) -->
+    <string name="day_title">Ringkasan Hari (Z-Report)</string>
+    <string name="day_subtitle">Rekonsiliasi harian &amp; penutupan audit · %1$s</string>
+    <string name="day_share_pdf">Kongsi Laporan PDF</string>
+    <string name="day_print">Cetak Resit 80mm</string>
+    <string name="day_prev">Hari sebelumnya</string>
+    <string name="day_next">Hari seterusnya</string>
+    <string name="day_gross_sales">Jumlah Jualan Kasar</string>
+    <string name="day_transactions">%1$d transaksi</string>
+    <string name="day_vs_yesterday_up">+%1$s%% berbanding semalam</string>
+    <string name="day_vs_yesterday_down">−%1$s%% berbanding semalam</string>
+    <string name="day_avg_basket">Nilai Bakul Purata</string>
+    <string name="day_avg_basket_caption">setiap tiket pelanggan</string>
+    <string name="day_expected_drawer">Tunai Laci Dijangka</string>
+    <string name="day_reconciled">Diselaraskan</string>
+    <string name="day_variance">Varians %1$s</string>
+    <string name="day_cash_movement">Pergerakan Tunai Laci</string>
+    <string name="day_cash_movement_hint">Jejak audit lejar masa nyata untuk laci fizikal</string>
+    <string name="day_cash_sales">Hasil Jualan Tunai</string>
+    <string name="day_cash_in">Tunai Masuk Manual</string>
+    <string name="day_cash_out">Tunai Keluar Manual (Bayaran)</string>
+    <string name="day_physical_count">Kiraan Fizikal Sebenar</string>
+    <string name="day_save_count">Simpan Kiraan</string>
+    <string name="day_count_match">Sepadan (varians RM 0.00) — sedia untuk bank masuk</string>
+    <string name="day_count_variance">Varians %1$s direkodkan — berjurnal dengan atribusi</string>
+    <string name="day_tenders">Kaedah Bayaran</string>
+    <string name="day_tenders_caption">%1$d resit</string>
+    <string name="day_tender_orders">%1$d pesanan</string>
+    <string name="day_top_sellers">Produk Terlaris</string>
+    <string name="day_top_sellers_caption">Disusun mengikut kelantangan</string>
+    <string name="day_top_seller_units">%1$d unit terjual</string>
+    <string name="day_close_register">Tutup Kaunter &amp; Kunci</string>
+
+    <!-- Stitch design update: product entry -->
+    <string name="product_section_identity">Identiti &amp; Klasifikasi</string>
+    <string name="product_section_pricing">Harga &amp; Margin</string>
+    <string name="product_section_stock">Stok &amp; Keterlihatan Terminal</string>
+    <string name="product_current_on_hand">Stok semasa di tangan: %1$d unit</string>
+    <string name="product_threshold_units">%1$d unit</string>
+    <string name="product_threshold_hint">Paras amaran stok rendah — mencetuskan lencana ambar pada skrin Jualan</string>
+    <string name="product_margin_healthy">Sihat</string>
+    <string name="product_margin_thin">Rendah</string>
+    <string name="product_tile_preview">Pratonton Jubin Jualan Langsung</string>
+    <string name="product_tile_preview_hint">Bagaimana ia muncul pada skrin Jualan juruwang</string>
+    <string name="product_preview_name">Nama Produk</string>
+
+    <!-- Stitch design update: lock screen -->
+    <string name="lock_pick_profile">Pilih profil anda dan masukkan PIN 4-digit</string>
+    <string name="lock_backspace">Padam</string>
+    <string name="lock_forgot_pin">Lupa PIN? Hubungi Penyelia Kedai</string>
+    <string name="error_no_internet">Tiada sambungan internet</string>
+    <string name="error_request_timeout">Permintaan tamat masa</string>
+    <string name="error_unauthorized">Sesi telah tamat — log masuk semula</string>
+    <string name="error_server">Ralat pelayan — cuba lagi kemudian</string>
+    <string name="error_serialization">Respons pelayan tidak sah</string>
+    <string name="error_disk_full">Storan penuh</string>
+    <string name="error_not_found">Tidak dijumpai</string>
+</resources>
