@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.SettingsKeys
+import net.redngreen.easypos.core.database.SettingsKeys
 import net.redngreen.easypos.core.data.repo.SettingsRepository
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.session.SessionManager
-import net.redngreen.easypos.print.BluetoothPrinter
-import net.redngreen.easypos.print.PrintController
-import net.redngreen.easypos.print.PrintState
+import net.redngreen.easypos.core.print.BluetoothPrinter
+import net.redngreen.easypos.core.print.PrintController
+import net.redngreen.easypos.core.print.PrintState
 
 /** Printer setup (task 10.5): pick a paired printer, width, drawer kick, test print. */
 @HiltViewModel

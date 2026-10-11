@@ -13,19 +13,19 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.SettingsKeys
-import net.redngreen.easypos.core.data.dao.ProductDao
-import net.redngreen.easypos.core.data.dao.SettingDao
-import net.redngreen.easypos.core.data.entity.Category
-import net.redngreen.easypos.core.data.entity.HeldSale
-import net.redngreen.easypos.core.data.entity.PaymentType
-import net.redngreen.easypos.core.data.entity.Product
+import net.redngreen.easypos.core.database.SettingsKeys
+import net.redngreen.easypos.core.database.dao.ProductDao
+import net.redngreen.easypos.core.database.dao.SettingDao
+import net.redngreen.easypos.core.database.entity.Category
+import net.redngreen.easypos.core.database.entity.HeldSale
+import net.redngreen.easypos.core.database.entity.PaymentType
+import net.redngreen.easypos.core.database.entity.Product
 import net.redngreen.easypos.core.data.repo.CatalogRepository
 import net.redngreen.easypos.core.data.repo.SaleRepository
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.core.session.SessionManager
-import net.redngreen.easypos.print.PrintController
-import net.redngreen.easypos.print.PrintState
+import net.redngreen.easypos.core.print.PrintController
+import net.redngreen.easypos.core.print.PrintState
 
 /** One row of the live cart. Product lines increment by identity; quick-sell never matches. */
 data class CartLine(

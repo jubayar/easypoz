@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import net.redngreen.easypos.core.data.repo.TenantConfigRepository
-import net.redngreen.easypos.core.data.sync.SyncStatus
-import net.redngreen.easypos.core.data.sync.SyncStatusRepository
+import net.redngreen.easypos.core.sync.SyncStatus
+import net.redngreen.easypos.core.sync.SyncStatusRepository
 
 /** Shell chrome state: shop identity + honest sync status (task 12.4). */
 @HiltViewModel
@@ -27,7 +27,7 @@ constructor(
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5_000),
-                SyncStatus(net.redngreen.easypos.core.data.sync.SyncPhase.SYNCED, 0, false),
+                SyncStatus(net.redngreen.easypos.core.sync.SyncPhase.SYNCED, 0, false),
             )
 
     /** Shop display name for the sidebar header; blank until profile is set. */

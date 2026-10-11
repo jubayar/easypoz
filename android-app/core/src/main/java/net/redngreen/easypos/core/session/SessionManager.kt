@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.dao.ActivityLogDao
-import net.redngreen.easypos.core.data.dao.UserDao
-import net.redngreen.easypos.core.data.entity.ActivityLog
-import net.redngreen.easypos.core.data.entity.User
+import net.redngreen.easypos.core.database.dao.ActivityLogDao
+import net.redngreen.easypos.core.database.dao.UserDao
+import net.redngreen.easypos.core.database.entity.ActivityLog
+import net.redngreen.easypos.core.database.entity.User
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role
 import net.redngreen.easypos.core.security.PinHasher

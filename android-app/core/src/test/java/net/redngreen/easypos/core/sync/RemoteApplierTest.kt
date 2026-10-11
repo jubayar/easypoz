@@ -1,10 +1,10 @@
 package net.redngreen.easypos.core.sync
 
 import kotlinx.coroutines.test.runTest
-import net.redngreen.easypos.core.data.LocalIdentity
-import net.redngreen.easypos.core.data.entity.Product
-import net.redngreen.easypos.core.data.sync.LwwDecision
-import net.redngreen.easypos.core.data.sync.RemoteApplier
+import net.redngreen.easypos.core.database.LocalIdentity
+import net.redngreen.easypos.core.database.entity.Product
+import net.redngreen.easypos.core.sync.LwwDecision
+import net.redngreen.easypos.core.sync.RemoteApplier
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue

@@ -11,24 +11,24 @@ import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import net.redngreen.easypos.core.data.dao.ActivityLogDao
-import net.redngreen.easypos.core.data.dao.BackupDao
-import net.redngreen.easypos.core.data.dao.CashEntryDao
-import net.redngreen.easypos.core.data.dao.CategoryDao
-import net.redngreen.easypos.core.data.dao.ConflictLogDao
-import net.redngreen.easypos.core.data.dao.DrawerCountDao
-import net.redngreen.easypos.core.data.dao.HeldSaleDao
-import net.redngreen.easypos.core.data.dao.JournalDao
-import net.redngreen.easypos.core.data.dao.PaymentTypeDao
-import net.redngreen.easypos.core.data.dao.ProductDao
-import net.redngreen.easypos.core.data.dao.ReportsDao
-import net.redngreen.easypos.core.data.dao.SaleDao
-import net.redngreen.easypos.core.data.dao.SettingDao
-import net.redngreen.easypos.core.data.dao.StockDeltaDao
-import net.redngreen.easypos.core.data.dao.SyncStateDao
-import net.redngreen.easypos.core.data.dao.TenantConfigDao
-import net.redngreen.easypos.core.data.dao.UserDao
-import net.redngreen.easypos.core.data.db.EasyPosDatabase
+import net.redngreen.easypos.core.database.dao.ActivityLogDao
+import net.redngreen.easypos.core.database.dao.BackupDao
+import net.redngreen.easypos.core.database.dao.CashEntryDao
+import net.redngreen.easypos.core.database.dao.CategoryDao
+import net.redngreen.easypos.core.database.dao.ConflictLogDao
+import net.redngreen.easypos.core.database.dao.DrawerCountDao
+import net.redngreen.easypos.core.database.dao.HeldSaleDao
+import net.redngreen.easypos.core.database.dao.JournalDao
+import net.redngreen.easypos.core.database.dao.PaymentTypeDao
+import net.redngreen.easypos.core.database.dao.ProductDao
+import net.redngreen.easypos.core.database.dao.ReportsDao
+import net.redngreen.easypos.core.database.dao.SaleDao
+import net.redngreen.easypos.core.database.dao.SettingDao
+import net.redngreen.easypos.core.database.dao.StockDeltaDao
+import net.redngreen.easypos.core.database.dao.SyncStateDao
+import net.redngreen.easypos.core.database.dao.TenantConfigDao
+import net.redngreen.easypos.core.database.dao.UserDao
+import net.redngreen.easypos.core.database.db.EasyPosDatabase
 
 @Module
 @InstallIn(SingletonComponent::class)

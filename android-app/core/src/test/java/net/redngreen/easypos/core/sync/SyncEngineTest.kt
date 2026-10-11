@@ -1,8 +1,8 @@
 package net.redngreen.easypos.core.sync
 
 import kotlinx.coroutines.test.runTest
-import net.redngreen.easypos.core.data.sync.PushBatchRequest
-import net.redngreen.easypos.core.data.sync.SyncOutcome
+import net.redngreen.easypos.core.sync.PushBatchRequest
+import net.redngreen.easypos.core.sync.SyncOutcome
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

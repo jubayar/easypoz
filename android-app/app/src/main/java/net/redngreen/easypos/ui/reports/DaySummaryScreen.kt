@@ -58,7 +58,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import net.redngreen.easypos.R
 import net.redngreen.easypos.core.money.MoneyFormatter
-import net.redngreen.easypos.print.PrintState
+import net.redngreen.easypos.core.print.PrintState
 import net.redngreen.easypos.theme.ExtendedTheme
 import net.redngreen.easypos.ui.session.SessionViewModel
 

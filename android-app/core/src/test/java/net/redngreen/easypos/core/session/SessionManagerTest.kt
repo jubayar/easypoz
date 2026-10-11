@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
-import net.redngreen.easypos.core.data.dao.ActivityLogDao
-import net.redngreen.easypos.core.data.dao.UserDao
-import net.redngreen.easypos.core.data.entity.ActivityLog
-import net.redngreen.easypos.core.data.entity.User
+import net.redngreen.easypos.core.database.dao.ActivityLogDao
+import net.redngreen.easypos.core.database.dao.UserDao
+import net.redngreen.easypos.core.database.entity.ActivityLog
+import net.redngreen.easypos.core.database.entity.User
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.security.PinHasher
 import org.junit.Assert.assertEquals

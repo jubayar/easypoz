@@ -55,7 +55,7 @@ import androidx.compose.ui.window.DialogProperties
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.data.entity.PaymentType
+import net.redngreen.easypos.core.database.entity.PaymentType
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.theme.ExtendedTheme
 import net.redngreen.easypos.ui.common.PosKeypad

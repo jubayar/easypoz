@@ -1,15 +1,15 @@
 package net.redngreen.easypos.core.data.backup
 
 import kotlinx.serialization.Serializable
-import net.redngreen.easypos.core.data.journal.CashEntryPayload
-import net.redngreen.easypos.core.data.journal.CategoryPayload
-import net.redngreen.easypos.core.data.journal.DrawerCountPayload
-import net.redngreen.easypos.core.data.journal.PaymentTypePayload
-import net.redngreen.easypos.core.data.journal.ProductPayload
-import net.redngreen.easypos.core.data.journal.SalePayload
-import net.redngreen.easypos.core.data.journal.SettingPayload
-import net.redngreen.easypos.core.data.journal.StockDeltaPayload
-import net.redngreen.easypos.core.data.journal.TenantConfigPayload
+import net.redngreen.easypos.core.database.journal.CashEntryPayload
+import net.redngreen.easypos.core.database.journal.CategoryPayload
+import net.redngreen.easypos.core.database.journal.DrawerCountPayload
+import net.redngreen.easypos.core.database.journal.PaymentTypePayload
+import net.redngreen.easypos.core.database.journal.ProductPayload
+import net.redngreen.easypos.core.database.journal.SalePayload
+import net.redngreen.easypos.core.database.journal.SettingPayload
+import net.redngreen.easypos.core.database.journal.StockDeltaPayload
+import net.redngreen.easypos.core.database.journal.TenantConfigPayload
 
 /**
  * A user as stored in a manual backup (task 11.3): identity, role and state

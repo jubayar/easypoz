@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.data.sync.SyncPhase
+import net.redngreen.easypos.core.sync.SyncPhase
 
 /** Sync & account screen (tasks 12.4/12.5): status, manual sync, sign-in/restore, conflicts. */
 @OptIn(ExperimentalMaterial3Api::class)

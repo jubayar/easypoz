@@ -5,9 +5,9 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.sync.SyncScheduler
-import net.redngreen.easypos.core.data.sync.SyncStatusRepository
-import net.redngreen.easypos.core.data.sync.TokenStore
+import net.redngreen.easypos.core.sync.SyncScheduler
+import net.redngreen.easypos.core.sync.SyncStatusRepository
+import net.redngreen.easypos.core.network.TokenStore
 
 @HiltAndroidApp
 class EasyPosApp : Application() {

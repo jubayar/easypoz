@@ -5,13 +5,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import net.redngreen.easypos.core.data.LocalIdentity
-import net.redngreen.easypos.core.data.dao.CashEntryDao
-import net.redngreen.easypos.core.data.dao.SaleDao
-import net.redngreen.easypos.core.data.entity.CashEntry
-import net.redngreen.easypos.core.data.journal.JournalEntities
-import net.redngreen.easypos.core.data.journal.JournalizedWriter
-import net.redngreen.easypos.core.data.journal.cashEntryPayload
+import net.redngreen.easypos.core.database.LocalIdentity
+import net.redngreen.easypos.core.database.dao.CashEntryDao
+import net.redngreen.easypos.core.database.dao.SaleDao
+import net.redngreen.easypos.core.database.entity.CashEntry
+import net.redngreen.easypos.core.database.journal.JournalEntities
+import net.redngreen.easypos.core.database.journal.JournalizedWriter
+import net.redngreen.easypos.core.database.journal.cashEntryPayload
 
 /**
  * Cash in/out (tasks 9.1–9.4). Entries are immutable and journaled; the live

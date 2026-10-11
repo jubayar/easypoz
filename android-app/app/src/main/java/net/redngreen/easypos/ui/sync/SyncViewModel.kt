@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.dao.ConflictLogDao
-import net.redngreen.easypos.core.data.entity.ConflictLog
-import net.redngreen.easypos.core.data.sync.AccountSyncRepository
-import net.redngreen.easypos.core.data.sync.SignInOutcome
-import net.redngreen.easypos.core.data.sync.SyncEngine
-import net.redngreen.easypos.core.data.sync.SyncOutcome
-import net.redngreen.easypos.core.data.sync.SyncPhase
-import net.redngreen.easypos.core.data.sync.SyncStatus
-import net.redngreen.easypos.core.data.sync.SyncStatusRepository
-import net.redngreen.easypos.core.data.sync.TokenStore
+import net.redngreen.easypos.core.database.dao.ConflictLogDao
+import net.redngreen.easypos.core.database.entity.ConflictLog
+import net.redngreen.easypos.core.sync.AccountSyncRepository
+import net.redngreen.easypos.core.sync.SignInOutcome
+import net.redngreen.easypos.core.sync.SyncEngine
+import net.redngreen.easypos.core.sync.SyncOutcome
+import net.redngreen.easypos.core.sync.SyncPhase
+import net.redngreen.easypos.core.sync.SyncStatus
+import net.redngreen.easypos.core.sync.SyncStatusRepository
+import net.redngreen.easypos.core.network.TokenStore
 
 /** Localizable sync feedback; resolved to a string in the composable. */
 sealed interface SyncMessage {

@@ -4,15 +4,15 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
-import net.redngreen.easypos.core.data.LocalIdentity
-import net.redngreen.easypos.core.data.dao.ProductDao
-import net.redngreen.easypos.core.data.dao.StockDeltaDao
-import net.redngreen.easypos.core.data.entity.Product
-import net.redngreen.easypos.core.data.entity.StockDelta
-import net.redngreen.easypos.core.data.journal.JournalEntities
-import net.redngreen.easypos.core.data.journal.JournalizedWriter
-import net.redngreen.easypos.core.data.journal.productPayload
-import net.redngreen.easypos.core.data.journal.stockDeltaPayload
+import net.redngreen.easypos.core.database.LocalIdentity
+import net.redngreen.easypos.core.database.dao.ProductDao
+import net.redngreen.easypos.core.database.dao.StockDeltaDao
+import net.redngreen.easypos.core.database.entity.Product
+import net.redngreen.easypos.core.database.entity.StockDelta
+import net.redngreen.easypos.core.database.journal.JournalEntities
+import net.redngreen.easypos.core.database.journal.JournalizedWriter
+import net.redngreen.easypos.core.database.journal.productPayload
+import net.redngreen.easypos.core.database.journal.stockDeltaPayload
 
 /**
  * Stock reads and manual adjustments (tasks 8.1–8.4). Product.stockOnHand is

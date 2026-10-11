@@ -4,12 +4,12 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
-import net.redngreen.easypos.core.data.LocalIdentity
-import net.redngreen.easypos.core.data.dao.PaymentTypeDao
-import net.redngreen.easypos.core.data.entity.PaymentType
-import net.redngreen.easypos.core.data.journal.JournalEntities
-import net.redngreen.easypos.core.data.journal.JournalizedWriter
-import net.redngreen.easypos.core.data.journal.paymentTypePayload
+import net.redngreen.easypos.core.database.LocalIdentity
+import net.redngreen.easypos.core.database.dao.PaymentTypeDao
+import net.redngreen.easypos.core.database.entity.PaymentType
+import net.redngreen.easypos.core.database.journal.JournalEntities
+import net.redngreen.easypos.core.database.journal.JournalizedWriter
+import net.redngreen.easypos.core.database.journal.paymentTypePayload
 
 /**
  * Payment-type manager (task 11.1). Types are data, not code — the shop adds,

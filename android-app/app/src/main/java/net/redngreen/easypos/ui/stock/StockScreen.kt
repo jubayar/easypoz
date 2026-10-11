@@ -481,8 +481,8 @@ private fun StockDetailSheet(
     canAdjust: Boolean,
     canEdit: Boolean,
     message: String?,
-    onAdjust: (net.redngreen.easypos.core.data.entity.Product, StockAdjustMode, Long, String) -> Unit,
-    onThreshold: (net.redngreen.easypos.core.data.entity.Product, Int) -> Unit,
+    onAdjust: (net.redngreen.easypos.core.database.entity.Product, StockAdjustMode, Long, String) -> Unit,
+    onThreshold: (net.redngreen.easypos.core.database.entity.Product, Int) -> Unit,
     onConsumeMessage: () -> Unit,
     onDismiss: () -> Unit,
 ) {

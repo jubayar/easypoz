@@ -49,8 +49,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.data.sync.SyncPhase
-import net.redngreen.easypos.core.data.sync.SyncStatus
+import net.redngreen.easypos.core.sync.SyncPhase
+import net.redngreen.easypos.core.sync.SyncStatus
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role
 import net.redngreen.easypos.theme.ExtendedTheme

@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.dao.UserDao
-import net.redngreen.easypos.core.data.entity.CashEntry
+import net.redngreen.easypos.core.database.dao.UserDao
+import net.redngreen.easypos.core.database.entity.CashEntry
 import net.redngreen.easypos.core.data.repo.CashRepository
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role

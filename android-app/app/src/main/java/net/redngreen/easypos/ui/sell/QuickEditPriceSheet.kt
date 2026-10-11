@@ -109,7 +109,7 @@ fun QuickEditPriceSheet(
 /** PIN gate shown when the acting cashier lacks catalog-edit permission. */
 @Composable
 private fun ManagerPinGate(
-    product: net.redngreen.easypos.core.data.entity.Product?,
+    product: net.redngreen.easypos.core.database.entity.Product?,
     onVerify: (String, (Boolean) -> Unit) -> Unit,
     onDismiss: () -> Unit,
 ) {

@@ -4,12 +4,12 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
-import net.redngreen.easypos.core.data.LocalIdentity
-import net.redngreen.easypos.core.data.dao.UserDao
-import net.redngreen.easypos.core.data.entity.User
-import net.redngreen.easypos.core.data.journal.JournalEntities
-import net.redngreen.easypos.core.data.journal.JournalizedWriter
-import net.redngreen.easypos.core.data.journal.userPayload
+import net.redngreen.easypos.core.database.LocalIdentity
+import net.redngreen.easypos.core.database.dao.UserDao
+import net.redngreen.easypos.core.database.entity.User
+import net.redngreen.easypos.core.database.journal.JournalEntities
+import net.redngreen.easypos.core.database.journal.JournalizedWriter
+import net.redngreen.easypos.core.database.journal.userPayload
 import net.redngreen.easypos.core.model.Role
 import net.redngreen.easypos.core.security.PinHasher
 

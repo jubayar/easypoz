@@ -3,12 +3,12 @@ package net.redngreen.easypos.core.data.repo
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
-import net.redngreen.easypos.core.data.LocalIdentity
-import net.redngreen.easypos.core.data.dao.SettingDao
-import net.redngreen.easypos.core.data.entity.Setting
-import net.redngreen.easypos.core.data.journal.JournalEntities
-import net.redngreen.easypos.core.data.journal.JournalizedWriter
-import net.redngreen.easypos.core.data.journal.settingPayload
+import net.redngreen.easypos.core.database.LocalIdentity
+import net.redngreen.easypos.core.database.dao.SettingDao
+import net.redngreen.easypos.core.database.entity.Setting
+import net.redngreen.easypos.core.database.journal.JournalEntities
+import net.redngreen.easypos.core.database.journal.JournalizedWriter
+import net.redngreen.easypos.core.database.journal.settingPayload
 
 /**
  * Shop-level scalar settings (printer MAC/width, drawer kick, receipt

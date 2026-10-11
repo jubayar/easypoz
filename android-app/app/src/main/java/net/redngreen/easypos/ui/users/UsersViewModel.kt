@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.entity.User
+import net.redngreen.easypos.core.database.entity.User
 import net.redngreen.easypos.core.data.repo.UserRepository
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.session.SessionManager

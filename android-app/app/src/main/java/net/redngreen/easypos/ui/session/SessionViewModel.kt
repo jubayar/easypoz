@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import net.redngreen.easypos.core.data.SettingsKeys
-import net.redngreen.easypos.core.data.dao.SettingDao
-import net.redngreen.easypos.core.data.entity.User
+import net.redngreen.easypos.core.database.SettingsKeys
+import net.redngreen.easypos.core.database.dao.SettingDao
+import net.redngreen.easypos.core.database.entity.User
 import net.redngreen.easypos.core.data.repo.SettingsRepository
 import net.redngreen.easypos.core.data.repo.UserRepository
 import net.redngreen.easypos.core.model.Role

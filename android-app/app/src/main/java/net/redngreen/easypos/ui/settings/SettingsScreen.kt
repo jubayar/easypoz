@@ -60,7 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.data.entity.PaymentType
+import net.redngreen.easypos.core.database.entity.PaymentType
 
 /** Settings hub (tasks 11.1 + 11.5): profile, branding + preview, toggles, payment types, QR, language. */
 @OptIn(ExperimentalMaterial3Api::class)

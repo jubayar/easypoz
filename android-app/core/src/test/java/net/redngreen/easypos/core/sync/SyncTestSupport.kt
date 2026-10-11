@@ -3,13 +3,13 @@ package net.redngreen.easypos.core.sync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.serialization.json.Json
-import net.redngreen.easypos.core.data.LocalIdentity
-import net.redngreen.easypos.core.data.entity.JournalOp
-import net.redngreen.easypos.core.data.sync.PullOpWire
-import net.redngreen.easypos.core.data.sync.RemoteApplier
-import net.redngreen.easypos.core.data.sync.SyncEngine
-import net.redngreen.easypos.core.data.sync.SyncOpWire
-import net.redngreen.easypos.core.data.sync.SyncStatusRepository
+import net.redngreen.easypos.core.database.LocalIdentity
+import net.redngreen.easypos.core.database.entity.JournalOp
+import net.redngreen.easypos.core.sync.PullOpWire
+import net.redngreen.easypos.core.sync.RemoteApplier
+import net.redngreen.easypos.core.sync.SyncEngine
+import net.redngreen.easypos.core.sync.SyncOpWire
+import net.redngreen.easypos.core.sync.SyncStatusRepository
 
 internal class SyncHarness(
     val journal: FakeJournalDao,

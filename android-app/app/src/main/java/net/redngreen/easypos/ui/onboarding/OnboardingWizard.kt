@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.print.PrintState
+import net.redngreen.easypos.core.print.PrintState
 import net.redngreen.easypos.ui.settings.PrinterSetupViewModel
 
 /**

@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.dao.CategoryDao
-import net.redngreen.easypos.core.data.dao.ProductDao
-import net.redngreen.easypos.core.data.dao.UserDao
-import net.redngreen.easypos.core.data.entity.Product
+import net.redngreen.easypos.core.database.dao.CategoryDao
+import net.redngreen.easypos.core.database.dao.ProductDao
+import net.redngreen.easypos.core.database.dao.UserDao
+import net.redngreen.easypos.core.database.entity.Product
 import net.redngreen.easypos.core.data.repo.CatalogRepository
 import net.redngreen.easypos.core.data.repo.CatalogRepository.ProductFields
 import net.redngreen.easypos.core.model.Permission

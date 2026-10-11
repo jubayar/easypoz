@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.SettingsKeys
+import net.redngreen.easypos.core.database.SettingsKeys
 import net.redngreen.easypos.core.data.repo.CatalogRepository
 import net.redngreen.easypos.core.data.repo.SettingsRepository
 import net.redngreen.easypos.core.data.repo.TenantConfigRepository

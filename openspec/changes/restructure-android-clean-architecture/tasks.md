@@ -1,17 +1,17 @@
 ## 1. Preconditions
 
 - [x] 1.1 Sequencing decision recorded (2026-10-11, user override): change starts mid-v1 and interleaves with remaining `add-pos-tablet-v1` tasks; Android-side v1 tasks (13.x, 14.x) build on restructured code as migrations land, backend-only tasks (3.4, 3.6) are unaffected
-- [ ] 1.2 Create a restructure branch off main; all work lands there with per-step revertibility (design D9)
+- [x] 1.2 Create a restructure branch off main; all work lands there with per-step revertibility (design D9)
 
 ## 2. Core restructure (`:core`, Hilt still active)
 
-- [ ] 2.1 Create `core/result`: `Result<T, E>`, `DataError`, `EmptyResult`, map/onSuccess/onFailure helpers per android-error-handling skill
-- [ ] 2.2 Create `core/network`: Ktor `HttpClientFactory` (injectable engine, ContentNegotiation + kotlinx JSON, Auth bearer), safe-call helpers, DataStore-backed token storage replacing `TokenStore`; port `SyncConfig` timeout/TLS values into client config
-- [ ] 2.3 Port `BackendApi`/`SyncWire`/`HttpTransport` call sites in sync to the Ktor client; delete `HttpTransport`; wire contract (endpoints, payloads, push/pull semantics) unchanged
-- [ ] 2.4 Move Room code (entities, DAOs, `EasyPosDatabase`, journal, `LocalIdentity`, `SettingsKeys`) into `core/database` package; schema untouched
-- [ ] 2.5 Move sync engine (`SyncEngine`, `RemoteApplier`, `SyncWorker`, `SyncScheduler`, `SyncStatusRepository`, `AccountSyncRepository`) into `core/sync`
-- [ ] 2.6 Move `SessionManager` → `core/session`, `PinHasher` → `core/security`, `MoneyFormatter` → `core/money`, `Permissions`/shared enums → `core/model`; move `app/print` framework pieces (`PrintController`, `BluetoothPrinter`, `PdfReceiptWriter`, `PdfTextWriter`, `LogoRasterizer`, `DaySummaryShare`) into `core/print` alongside existing pure models
-- [ ] 2.7 Move the affected `:core` JUnit4 tests with their code; full `:core` test suite green (sync engine, offline soak, remote applier must pass unchanged)
+- [x] 2.1 Create `core/result`: `Result<T, E>`, `DataError`, `EmptyResult`, map/onSuccess/onFailure helpers per android-error-handling skill
+- [x] 2.2 Create `core/network`: Ktor `HttpClientFactory` (injectable engine, ContentNegotiation + kotlinx JSON, Auth bearer), safe-call helpers, DataStore-backed token storage replacing `TokenStore`; port `SyncConfig` timeout/TLS values into client config
+- [x] 2.3 Port `BackendApi`/`SyncWire`/`HttpTransport` call sites in sync to the Ktor client; delete `HttpTransport`; wire contract (endpoints, payloads, push/pull semantics) unchanged
+- [x] 2.4 Move Room code (entities, DAOs, `EasyPosDatabase`, journal, `LocalIdentity`, `SettingsKeys`) into `core/database` package; schema untouched
+- [x] 2.5 Move sync engine (`SyncEngine`, `RemoteApplier`, `SyncWorker`, `SyncScheduler`, `SyncStatusRepository`, `AccountSyncRepository`) into `core/sync`
+- [x] 2.6 Move `SessionManager` → `core/session`, `PinHasher` → `core/security`, `MoneyFormatter` → `core/money`, `Permissions`/shared enums → `core/model`; move `app/print` framework pieces (`PrintController`, `BluetoothPrinter`, `PdfReceiptWriter`, `PdfTextWriter`, `LogoRasterizer`, `DaySummaryShare`) into `core/print` alongside existing pure models
+- [x] 2.7 Move the affected `:core` JUnit4 tests with their code; full `:core` test suite green (sync engine, offline soak, remote applier must pass unchanged)
 
 ## 3. Koin bootstrap (coexists with Hilt)
 

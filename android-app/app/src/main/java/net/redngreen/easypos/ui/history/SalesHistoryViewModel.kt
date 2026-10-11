@@ -16,15 +16,15 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.LocalIdentity
-import net.redngreen.easypos.core.data.dao.PaymentTypeDao
-import net.redngreen.easypos.core.data.dao.ProductDao
-import net.redngreen.easypos.core.data.dao.SaleDao
-import net.redngreen.easypos.core.data.dao.UserDao
-import net.redngreen.easypos.core.data.entity.Sale
+import net.redngreen.easypos.core.database.LocalIdentity
+import net.redngreen.easypos.core.database.dao.PaymentTypeDao
+import net.redngreen.easypos.core.database.dao.ProductDao
+import net.redngreen.easypos.core.database.dao.SaleDao
+import net.redngreen.easypos.core.database.dao.UserDao
+import net.redngreen.easypos.core.database.entity.Sale
 import net.redngreen.easypos.core.data.repo.ReceiptRepository
-import net.redngreen.easypos.print.PdfReceiptWriter
-import net.redngreen.easypos.print.PrintController
+import net.redngreen.easypos.core.print.PdfReceiptWriter
+import net.redngreen.easypos.core.print.PrintController
 
 data class HistoryRow(
     val sale: Sale,

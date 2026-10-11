@@ -35,7 +35,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.data.entity.ActivityLog
+import net.redngreen.easypos.core.database.entity.ActivityLog
 
 private val LOG_TIME_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d MMM yyyy · HH:mm:ss")

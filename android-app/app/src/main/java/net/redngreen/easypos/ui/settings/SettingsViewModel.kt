@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.SettingsKeys
-import net.redngreen.easypos.core.data.entity.PaymentType
+import net.redngreen.easypos.core.database.SettingsKeys
+import net.redngreen.easypos.core.database.entity.PaymentType
 import net.redngreen.easypos.core.data.repo.PaymentTypeRepository
 import net.redngreen.easypos.core.data.repo.SettingsRepository
 import net.redngreen.easypos.core.data.repo.TenantConfigRepository

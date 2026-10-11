@@ -35,7 +35,7 @@ import net.redngreen.easypos.ui.session.SessionViewModel
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-  @javax.inject.Inject lateinit var syncScheduler: net.redngreen.easypos.core.data.sync.SyncScheduler
+  @javax.inject.Inject lateinit var syncScheduler: net.redngreen.easypos.core.sync.SyncScheduler
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

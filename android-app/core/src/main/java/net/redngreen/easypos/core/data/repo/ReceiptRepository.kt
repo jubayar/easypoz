@@ -2,13 +2,13 @@ package net.redngreen.easypos.core.data.repo
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import net.redngreen.easypos.core.data.SettingsKeys
-import net.redngreen.easypos.core.data.dao.PaymentTypeDao
-import net.redngreen.easypos.core.data.dao.ProductDao
-import net.redngreen.easypos.core.data.dao.SaleDao
-import net.redngreen.easypos.core.data.dao.SettingDao
-import net.redngreen.easypos.core.data.dao.TenantConfigDao
-import net.redngreen.easypos.core.data.dao.UserDao
+import net.redngreen.easypos.core.database.SettingsKeys
+import net.redngreen.easypos.core.database.dao.PaymentTypeDao
+import net.redngreen.easypos.core.database.dao.ProductDao
+import net.redngreen.easypos.core.database.dao.SaleDao
+import net.redngreen.easypos.core.database.dao.SettingDao
+import net.redngreen.easypos.core.database.dao.TenantConfigDao
+import net.redngreen.easypos.core.database.dao.UserDao
 import net.redngreen.easypos.core.print.MonoBitmap
 import net.redngreen.easypos.core.print.Receipt
 import net.redngreen.easypos.core.print.ReceiptLine
