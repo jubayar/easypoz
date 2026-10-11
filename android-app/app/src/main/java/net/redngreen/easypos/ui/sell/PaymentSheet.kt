@@ -55,7 +55,7 @@ import androidx.compose.ui.window.DialogProperties
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.database.entity.PaymentType
+import net.redngreen.easypos.feature.sell.domain.PaymentOption
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.designsystem.ExtendedTheme
 import net.redngreen.easypos.designsystem.PosKeypad
@@ -73,7 +73,7 @@ private val PAYMENT_TIME = DateTimeFormatter.ofPattern("d MMM yyyy · HH:mm")
 fun PaymentSheet(
     totalCents: Long,
     itemCount: Int,
-    paymentTypes: List<PaymentType>,
+    paymentTypes: List<PaymentOption>,
     merchantQrBase64: String?,
     drawerKick: Boolean,
     completing: Boolean,
@@ -210,7 +210,7 @@ private fun HeaderBlock(totalCents: Long, itemCount: Int, drawerKick: Boolean) {
 }
 
 @Composable
-private fun MethodCard(type: PaymentType, selected: Boolean, onClick: () -> Unit) {
+private fun MethodCard(type: PaymentOption, selected: Boolean, onClick: () -> Unit) {
     Row(
         modifier =
             Modifier.fillMaxWidth()
@@ -250,7 +250,7 @@ private fun MethodCard(type: PaymentType, selected: Boolean, onClick: () -> Unit
     }
 }
 
-private fun methodIcon(type: PaymentType): ImageVector = when {
+private fun methodIcon(type: PaymentOption): ImageVector = when {
     type.kind == "CASH" -> Icons.Filled.Payments
     type.name.contains("duit", ignoreCase = true) ||
         type.name.contains("qr", ignoreCase = true) -> Icons.Filled.QrCode2

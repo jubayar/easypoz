@@ -21,8 +21,8 @@ import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.model.Role
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.core.session.SessionManager
-import net.redngreen.easypos.core.print.DaySummaryShare
-import net.redngreen.easypos.core.print.PrintController
+import net.redngreen.easypos.print.DaySummaryShare
+import net.redngreen.easypos.print.PrintController
 
 data class DaySummaryUiState(
     val loading: Boolean = true,
@@ -60,7 +60,7 @@ class DaySummaryViewModel @Inject constructor(
     /** Non-null once a PDF is ready — the screen launches the share sheet. */
     val shareFile = MutableStateFlow<File?>(null)
 
-    val printState: StateFlow<net.redngreen.easypos.core.print.PrintState> = printer.state
+    val printState: StateFlow<net.redngreen.easypos.print.PrintState> = printer.state
 
     val shopName: StateFlow<String> =
         tenantRepo.observe()

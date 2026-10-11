@@ -1,7 +1,6 @@
-package net.redngreen.easypos.core.data.repo
+package net.redngreen.easypos.feature.sell.data
 
 import javax.inject.Inject
-import javax.inject.Singleton
 import net.redngreen.easypos.core.database.SettingsKeys
 import net.redngreen.easypos.core.database.dao.PaymentTypeDao
 import net.redngreen.easypos.core.database.dao.ProductDao
@@ -12,37 +11,28 @@ import net.redngreen.easypos.core.database.dao.UserDao
 import net.redngreen.easypos.core.print.MonoBitmap
 import net.redngreen.easypos.core.print.Receipt
 import net.redngreen.easypos.core.print.ReceiptLine
+import net.redngreen.easypos.feature.sell.domain.ReceiptRepository
 
 /**
  * Assembles a printable [Receipt] from local data (task 10.1) and reads the
  * printer configuration (task 10.5). All local — the receipt is built and
  * printed with no network (receipts spec).
  */
-@Singleton
-class ReceiptRepository @Inject constructor(
+class ReceiptRepositoryImpl @Inject constructor(
     private val saleDao: SaleDao,
     private val productDao: ProductDao,
     private val userDao: UserDao,
     private val tenantConfigDao: TenantConfigDao,
     private val paymentTypeDao: PaymentTypeDao,
     private val settingDao: SettingDao,
-) {
-    /** Printer settings the app needs at print time. */
-    data class PrintConfig(
-        val macAddress: String?,
-        val widthMm: Int,
-        val columns: Int,
-        val drawerKick: Boolean,
-    ) {
-        val isConfigured: Boolean get() = !macAddress.isNullOrBlank()
-    }
+) : ReceiptRepository {
 
-    suspend fun printConfig(): PrintConfig {
+    override suspend fun printConfig(): ReceiptRepository.ReceiptConfig {
         val mac = settingDao.get(SettingsKeys.PRINTER_MAC)?.takeIf { it.isNotBlank() }
         val widthMm = settingDao.get(SettingsKeys.PRINTER_WIDTH_MM)?.toIntOrNull()
             ?: SettingsKeys.PRINTER_WIDTH_DEFAULT_MM
         val kick = settingDao.get(SettingsKeys.DRAWER_KICK)?.toBooleanStrictOrNull() ?: true
-        return PrintConfig(
+        return ReceiptRepository.ReceiptConfig(
             macAddress = mac,
             widthMm = widthMm,
             columns = SettingsKeys.columnsForWidthMm(widthMm),
@@ -51,7 +41,7 @@ class ReceiptRepository @Inject constructor(
     }
 
     /** Builds the receipt for a sale; [logo] is rasterized by the caller (framework concern). */
-    suspend fun buildReceipt(saleId: String, isReprint: Boolean, logo: MonoBitmap?): Receipt? {
+    override suspend fun buildReceipt(saleId: String, isReprint: Boolean, logo: MonoBitmap?): Receipt? {
         val sale = saleDao.getById(saleId) ?: return null
         val lines = saleDao.linesFor(saleId)
         val config = tenantConfigDao.get()

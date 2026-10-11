@@ -13,19 +13,15 @@ import net.redngreen.easypos.core.network.DataStoreTokenStore
 import net.redngreen.easypos.core.network.HttpClientFactory
 import net.redngreen.easypos.core.network.TokenStore
 import net.redngreen.easypos.core.print.BluetoothPrinter
-import net.redngreen.easypos.core.print.DaySummaryShare
 import net.redngreen.easypos.core.print.LogoRasterizer
 import net.redngreen.easypos.core.print.PdfReceiptWriter
 import net.redngreen.easypos.core.print.PdfTextWriter
-import net.redngreen.easypos.core.print.PrintController
 import net.redngreen.easypos.core.security.PinHasher
 import net.redngreen.easypos.core.session.SessionManager
 import net.redngreen.easypos.core.data.repo.BackupRepository
 import net.redngreen.easypos.core.data.repo.CashRepository
 import net.redngreen.easypos.core.data.repo.PaymentTypeRepository
-import net.redngreen.easypos.core.data.repo.ReceiptRepository
 import net.redngreen.easypos.core.data.repo.ReportsRepository
-import net.redngreen.easypos.core.data.repo.SaleRepository
 import net.redngreen.easypos.core.data.repo.SettingsRepository
 import net.redngreen.easypos.core.data.repo.StockRepository
 import net.redngreen.easypos.core.data.repo.TenantConfigRepository
@@ -103,8 +99,6 @@ val printModule = module {
     singleOf(::LogoRasterizer)
     singleOf(::PdfReceiptWriter)
     singleOf(::PdfTextWriter)
-    singleOf(::DaySummaryShare)
-    singleOf(::PrintController)
 }
 
 /**
@@ -112,14 +106,12 @@ val printModule = module {
  * feature data layers. Entries disappear from here as features adopt them.
  */
 val bridgeRepoModule = module {
-    singleOf(::SaleRepository)
     singleOf(::StockRepository)
     singleOf(::CashRepository)
     singleOf(::UserRepository)
     singleOf(::SettingsRepository)
     singleOf(::TenantConfigRepository)
     singleOf(::PaymentTypeRepository)
-    singleOf(::ReceiptRepository)
     singleOf(::ReportsRepository)
     singleOf(::BackupRepository)
 }

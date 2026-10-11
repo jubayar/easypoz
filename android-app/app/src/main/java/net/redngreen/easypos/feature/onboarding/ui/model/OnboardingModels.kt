@@ -1,6 +1,6 @@
 package net.redngreen.easypos.feature.onboarding.ui.model
 
-import net.redngreen.easypos.core.print.PrintState
+import net.redngreen.easypos.print.PrintState
 import net.redngreen.easypos.core.database.SettingsKeys
 import net.redngreen.easypos.feature.onboarding.domain.OnboardingStep
 import net.redngreen.easypos.feature.onboarding.domain.PrinterOption

@@ -16,15 +16,16 @@ import kotlinx.coroutines.launch
 import net.redngreen.easypos.core.database.SettingsKeys
 import net.redngreen.easypos.core.database.dao.SettingDao
 import net.redngreen.easypos.feature.catalog.domain.Category
-import net.redngreen.easypos.core.database.entity.HeldSale
-import net.redngreen.easypos.core.database.entity.PaymentType
+import net.redngreen.easypos.feature.sell.domain.HeldCart
+import net.redngreen.easypos.feature.sell.domain.PaymentOption
 import net.redngreen.easypos.feature.catalog.domain.Product
 import net.redngreen.easypos.feature.catalog.domain.CatalogRepository
-import net.redngreen.easypos.core.data.repo.SaleRepository
+import net.redngreen.easypos.feature.sell.domain.CheckoutLine
+import net.redngreen.easypos.feature.sell.domain.SaleRepository
 import net.redngreen.easypos.core.money.MoneyFormatter
 import net.redngreen.easypos.core.session.SessionManager
-import net.redngreen.easypos.core.print.PrintController
-import net.redngreen.easypos.core.print.PrintState
+import net.redngreen.easypos.print.PrintController
+import net.redngreen.easypos.print.PrintState
 
 /** One row of the live cart. Product lines increment by identity; quick-sell never matches. */
 data class CartLine(
@@ -61,8 +62,8 @@ data class SellUiState(
     val totalCents: Long = 0L,
     /** Set when a scan found nothing — drives the create/quick-sell affordance. */
     val unknownBarcode: String? = null,
-    val heldSales: List<HeldSale> = emptyList(),
-    val paymentTypes: List<PaymentType> = emptyList(),
+    val heldSales: List<HeldCart> = emptyList(),
+    val paymentTypes: List<PaymentOption> = emptyList(),
     /** Base64 merchant QR (DuitNow) — shown at non-cash tender when configured. */
     val merchantQrBase64: String? = null,
     /** Drawer kick setting — drives the "drawer ready" hint on the payment sheet. */
@@ -99,7 +100,7 @@ class SellViewModel @Inject constructor(
     private val completing = MutableStateFlow(false)
     private val message = MutableStateFlow<String?>(null)
     private var resumedHeldId: String? = null
-    private var paymentTypesCache: List<PaymentType> = emptyList()
+    private var paymentTypesCache: List<PaymentOption> = emptyList()
 
     /** Receipt print lifecycle (task 10.2) — surfaced as a retry affordance, never blocks selling. */
     val printState: StateFlow<PrintState> = printer.state
@@ -112,8 +113,8 @@ class SellViewModel @Inject constructor(
     )
 
     private data class Ledger(
-        val held: List<HeldSale>,
-        val paymentTypes: List<PaymentType>,
+        val held: List<HeldCart>,
+        val paymentTypes: List<PaymentOption>,
         val message: String?,
         val drawerKick: Boolean,
     )
@@ -313,7 +314,7 @@ class SellViewModel @Inject constructor(
         completing.value = true
         viewModelScope.launch {
             try {
-                val lines = cart.value.map { SaleRepository.CheckoutLine(it.productId, it.name, it.qty, it.unitCents) }
+                val lines = cart.value.map { CheckoutLine(it.productId, it.name, it.qty, it.unitCents) }
                 val total = lines.sumOf { MoneyFormatter.multiply(it.qty, it.unitCents) }
                 val sale = sales.completeSale(
                     lines = lines,
@@ -351,7 +352,7 @@ class SellViewModel @Inject constructor(
     // ─── Hold & resume (task 7.9) ────────────────────────────────────────────
 
     fun holdCart(label: String) {
-        val lines = cart.value.map { SaleRepository.CheckoutLine(it.productId, it.name, it.qty, it.unitCents) }
+        val lines = cart.value.map { CheckoutLine(it.productId, it.name, it.qty, it.unitCents) }
         if (lines.isEmpty()) return
         viewModelScope.launch {
             sales.holdCart(lines, label, session.activeUserId.value)
@@ -360,10 +361,10 @@ class SellViewModel @Inject constructor(
     }
 
     /** Resumes a held cart; a non-empty cart is parked first so nothing is lost. */
-    fun resumeHeld(held: HeldSale) {
+    fun resumeHeld(held: HeldCart) {
         viewModelScope.launch {
             if (cart.value.isNotEmpty()) {
-                val current = cart.value.map { SaleRepository.CheckoutLine(it.productId, it.name, it.qty, it.unitCents) }
+                val current = cart.value.map { CheckoutLine(it.productId, it.name, it.qty, it.unitCents) }
                 sales.holdCart(current, null, session.activeUserId.value)
             }
             cart.value = sales.resumeLines(held).map {

@@ -1,9 +1,9 @@
-package net.redngreen.easypos.core.data.repo
+package net.redngreen.easypos.feature.sell.data
 
 import java.util.UUID
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import net.redngreen.easypos.core.database.LocalIdentity
 import net.redngreen.easypos.core.database.dao.HeldSaleDao
 import net.redngreen.easypos.core.database.dao.PaymentTypeDao
@@ -21,15 +21,18 @@ import net.redngreen.easypos.core.database.journal.paymentTypePayload
 import net.redngreen.easypos.core.database.journal.salePayload
 import net.redngreen.easypos.core.database.journal.stockDeltaPayload
 import net.redngreen.easypos.core.money.MoneyFormatter
+import kotlinx.serialization.json.Json
+import net.redngreen.easypos.feature.sell.domain.CheckoutLine
+import net.redngreen.easypos.feature.sell.domain.CompletedSale
+import net.redngreen.easypos.feature.sell.domain.HeldCart
+import net.redngreen.easypos.feature.sell.domain.PaymentOption
+import net.redngreen.easypos.feature.sell.domain.SaleRepository
 
 /**
- * Sale completion + hold/resume (tasks 7.5–7.9). The commit is ONE Room
- * transaction: sale + lines + stock deltas + stock-cache bumps + every
- * journal op — fully offline, never blocked by network or license state
- * (the sell path is sacred, design D5 + invariants).
+ * Sale completion + hold/resume over Room (tasks 7.5–7.9). Room entities
+ * stay inside this class; the domain sees mapped models only (design D5).
  */
-@Singleton
-class SaleRepository @Inject constructor(
+class RoomSaleRepository @Inject constructor(
     private val saleDao: SaleDao,
     private val productDao: ProductDao,
     private val stockDeltaDao: StockDeltaDao,
@@ -37,31 +40,17 @@ class SaleRepository @Inject constructor(
     private val heldSaleDao: HeldSaleDao,
     private val identity: LocalIdentity,
     private val writer: JournalizedWriter,
-) {
-    /** A cart line at payment time — product or quick-sell custom item. */
-    data class CheckoutLine(
-        val productId: String?,
-        val name: String,
-        val qty: Int,
-        val unitCents: Long,
-    ) {
-        val lineCents: Long get() = MoneyFormatter.multiply(qty, unitCents)
-    }
+) : SaleRepository {
 
-    class EmptyCart : Exception("cart is empty")
+    private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
-    /**
-     * Commits a sale atomically: sequential local number, lines, SALE stock
-     * deltas with cache bumps, and the journal ops — or nothing at all.
-     * Resumed carts pass [resumedHeldId] so the parked row dies here too.
-     */
-    suspend fun completeSale(
+    override suspend fun completeSale(
         lines: List<CheckoutLine>,
         paymentTypeId: String?,
         tenderedCents: Long?,
         actorUserId: String?,
-        resumedHeldId: String? = null,
-    ): Sale {
+        resumedHeldId: String?,
+    ): CompletedSale {
         if (lines.isEmpty()) throw EmptyCart()
         val shopId = identity.shopId()
         val deviceId = identity.deviceId()
@@ -142,9 +131,8 @@ class SaleRepository @Inject constructor(
             },
         ) {
             val numbered = sale.copy(localNo = saleDao.nextLocalNo(shopId))
-            val numberedLines = saleLines // lines carry saleId already
             saleDao.insert(numbered)
-            saleDao.insertLines(numberedLines)
+            saleDao.insertLines(saleLines)
             deltas.forEach { delta ->
                 stockDeltaDao.insert(delta)
                 productDao.bumpStock(delta.productId, delta.delta)
@@ -153,52 +141,42 @@ class SaleRepository @Inject constructor(
             numbered
         }
         // journalizedBatch's block returns Unit by signature; re-read the sale.
-        return saleDao.getById(saleId) ?: sale
+        return (saleDao.getById(saleId) ?: sale).toDomain()
     }
 
     // ─── Hold & resume (task 7.9) ────────────────────────────────────────────
 
-    /** Parks the cart — no sale, no stock movement, no number consumed. */
-    suspend fun holdCart(
+    override suspend fun holdCart(
         lines: List<CheckoutLine>,
         label: String?,
         actorUserId: String?,
-    ): HeldSale {
-        val json = writer.encode(lines.map { HeldLine(it.productId, it.name, it.qty, it.unitCents) })
+    ): HeldCart {
+        val jsonText = json.encodeToString(lines.map { HeldLine(it.productId, it.name, it.qty, it.unitCents) })
         val held = HeldSale(
             id = UUID.randomUUID().toString(),
             shopId = identity.shopId(),
             userId = actorUserId,
             label = label?.trim()?.ifEmpty { null },
-            linesJson = json,
+            linesJson = jsonText,
             heldAt = System.currentTimeMillis(),
         )
         heldSaleDao.upsert(held) // local-only: never journaled (design D4)
-        return held
+        return held.toDomain()
     }
 
-    fun resumeLines(held: HeldSale): List<CheckoutLine> =
-        writer.json.decodeFromString<List<HeldLine>>(held.linesJson)
-            .map { CheckoutLine(it.productId, it.name, it.qty, it.unitCents) }
+    override fun resumeLines(held: HeldCart): List<CheckoutLine> = held.lines
 
-    fun observeHeld(): Flow<List<HeldSale>> = heldSaleDao.observeAll()
+    override fun observeHeld(): Flow<List<HeldCart>> =
+        heldSaleDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    suspend fun discardHeld(id: String) = heldSaleDao.delete(id)
-
-    @kotlinx.serialization.Serializable
-    data class HeldLine(
-        val productId: String?,
-        val name: String,
-        val qty: Int,
-        val unitCents: Long,
-    )
+    override suspend fun discardHeld(id: String) = heldSaleDao.delete(id)
 
     // ─── Payment types (task 7.5) ────────────────────────────────────────────
 
-    fun observePaymentTypes(): Flow<List<PaymentType>> = paymentTypeDao.observeActive()
+    override fun observePaymentTypes(): Flow<List<PaymentOption>> =
+        paymentTypeDao.observeActive().map { list -> list.map { it.toDomain() } }
 
-    /** Shop-configurable list; seeded with the spec defaults on first run. */
-    suspend fun ensureDefaultPaymentTypes(actorUserId: String?) {
+    override suspend fun ensureDefaultPaymentTypes(actorUserId: String?) {
         if (paymentTypeDao.getAll().isNotEmpty()) return
         val now = System.currentTimeMillis()
         DEFAULT_PAYMENT_TYPES.forEachIndexed { index, (name, kind) ->
@@ -224,6 +202,40 @@ class SaleRepository @Inject constructor(
         }
     }
 
+    // ─── Mappers (entity ↔ domain, design D5) ────────────────────────────────
+
+    private fun Sale.toDomain() = CompletedSale(
+        id = id,
+        shopId = shopId,
+        localNo = localNo,
+        userId = userId,
+        at = at,
+        totalCents = totalCents,
+        paymentTypeId = paymentTypeId,
+        tenderedCents = tenderedCents,
+        changeCents = changeCents,
+        voided = voided,
+    )
+
+    private fun HeldSale.toDomain() = HeldCart(
+        id = id,
+        userId = userId,
+        label = label,
+        lines = json.decodeFromString<List<HeldLine>>(linesJson)
+            .map { CheckoutLine(it.productId, it.name, it.qty, it.unitCents) },
+        heldAt = heldAt,
+    )
+
+    private fun PaymentType.toDomain() = PaymentOption(id = id, name = name, kind = kind)
+
+    @kotlinx.serialization.Serializable
+    data class HeldLine(
+        val productId: String?,
+        val name: String,
+        val qty: Int,
+        val unitCents: Long,
+    )
+
     companion object {
         const val REASON_SALE = "SALE"
         private val DEFAULT_PAYMENT_TYPES = listOf(
@@ -234,3 +246,5 @@ class SaleRepository @Inject constructor(
         )
     }
 }
+
+class EmptyCart : Exception("cart is empty")

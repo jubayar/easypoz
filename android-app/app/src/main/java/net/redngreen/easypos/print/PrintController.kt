@@ -1,7 +1,9 @@
-package net.redngreen.easypos.core.print
+package net.redngreen.easypos.print
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import net.redngreen.easypos.core.print.BluetoothPrinter
+import net.redngreen.easypos.core.print.LogoRasterizer
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -10,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import net.redngreen.easypos.core.data.repo.ReceiptRepository
+import net.redngreen.easypos.feature.sell.domain.ReceiptRepository
 import net.redngreen.easypos.core.data.repo.ReportsRepository
 import net.redngreen.easypos.core.data.repo.TenantConfigRepository
 import net.redngreen.easypos.core.print.DaySummaryEscPos

@@ -14,13 +14,12 @@ import net.redngreen.easypos.core.data.repo.SettingsRepository
 import net.redngreen.easypos.core.data.repo.TenantConfigRepository
 import net.redngreen.easypos.core.model.Permission
 import net.redngreen.easypos.core.print.BluetoothPrinter
-import net.redngreen.easypos.core.print.PrintController
-import net.redngreen.easypos.core.print.PrintState
+import net.redngreen.easypos.print.PrintController
 import net.redngreen.easypos.core.session.SessionManager
 import net.redngreen.easypos.feature.onboarding.domain.OnboardingRepository
 import net.redngreen.easypos.feature.onboarding.domain.OnboardingStep
+import net.redngreen.easypos.feature.onboarding.domain.PrinterDevicesSnapshot
 import net.redngreen.easypos.feature.onboarding.domain.PrinterOption
-import net.redngreen.easypos.feature.onboarding.domain.PrinterSetupSnapshot
 import net.redngreen.easypos.feature.onboarding.domain.ShopProfile
 
 /**
@@ -63,18 +62,16 @@ class SettingsOnboardingRepository(
         return step to profile
     }
 
-    override fun observePrinterState(): Flow<PrinterSetupSnapshot> = combine(
+    override fun observePrinterDevices(): Flow<PrinterDevicesSnapshot> = combine(
         devices,
         settings.observe(SettingsKeys.PRINTER_MAC),
         settings.observe(SettingsKeys.PRINTER_WIDTH_MM),
-        printController.state,
-    ) { deviceList, mac, width, printState ->
-        PrinterSetupSnapshot(
+    ) { deviceList, mac, width ->
+        PrinterDevicesSnapshot(
             bluetoothAvailable = printer.isAvailable,
             devices = deviceList,
             mac = mac,
             widthMm = width?.toIntOrNull() ?: SettingsKeys.PRINTER_WIDTH_DEFAULT_MM,
-            printState = printState,
         )
     }
 

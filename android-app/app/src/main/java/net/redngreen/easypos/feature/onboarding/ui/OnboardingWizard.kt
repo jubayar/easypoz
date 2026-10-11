@@ -32,7 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.redngreen.easypos.R
-import net.redngreen.easypos.core.print.PrintState
+import net.redngreen.easypos.print.PrintState
 import net.redngreen.easypos.feature.onboarding.domain.OnboardingStep
 import net.redngreen.easypos.feature.onboarding.ui.model.OnboardingAction
 import net.redngreen.easypos.feature.onboarding.ui.model.OnboardingState

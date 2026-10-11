@@ -14,12 +14,14 @@ import net.redngreen.easypos.core.di.syncModule
 import net.redngreen.easypos.core.network.TokenStore
 import net.redngreen.easypos.core.sync.SyncScheduler
 import net.redngreen.easypos.core.sync.SyncStatusRepository
+import net.redngreen.easypos.di.printControllerModule
 import net.redngreen.easypos.feature.catalog.data.di.catalogDataModule
 import net.redngreen.easypos.feature.catalog.ui.di.catalogUiModule
 import net.redngreen.easypos.feature.login.data.di.loginDataModule
 import net.redngreen.easypos.feature.login.ui.di.loginUiModule
 import net.redngreen.easypos.feature.onboarding.data.di.onboardingDataModule
 import net.redngreen.easypos.feature.onboarding.ui.di.onboardingUiModule
+import net.redngreen.easypos.feature.sell.data.di.sellDataModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -47,6 +49,8 @@ class EasyPosApp : Application() {
                 bridgeRepoModule,
                 catalogDataModule,
                 catalogUiModule,
+                sellDataModule,
+                printControllerModule,
                 loginDataModule,
                 loginUiModule,
                 onboardingDataModule,

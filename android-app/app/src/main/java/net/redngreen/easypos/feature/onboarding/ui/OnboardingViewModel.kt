@@ -14,6 +14,7 @@ import net.redngreen.easypos.feature.onboarding.domain.OnboardingStep
 import net.redngreen.easypos.feature.onboarding.domain.ShopProfile
 import net.redngreen.easypos.feature.onboarding.ui.model.OnboardingAction
 import net.redngreen.easypos.feature.onboarding.ui.model.OnboardingState
+import net.redngreen.easypos.print.PrintController
 import net.redngreen.easypos.shared.UiText
 
 /**
@@ -25,6 +26,7 @@ import net.redngreen.easypos.shared.UiText
  */
 class OnboardingViewModel(
     private val onboardingRepo: OnboardingRepository,
+    private val printController: PrintController,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -46,16 +48,20 @@ class OnboardingViewModel(
             }
         }
         viewModelScope.launch {
-            onboardingRepo.observePrinterState().collect { printer ->
+            onboardingRepo.observePrinterDevices().collect { printer ->
                 _state.update {
                     it.copy(
                         bluetoothAvailable = printer.bluetoothAvailable,
                         printers = printer.devices,
                         printerMac = printer.mac,
                         printerWidthMm = printer.widthMm,
-                        printState = printer.printState,
                     )
                 }
+            }
+        }
+        viewModelScope.launch {
+            printController.state.collect { printState ->
+                _state.update { it.copy(printState = printState) }
             }
         }
         // Persisted step/profile fill anything the process-death restore left blank.

@@ -1,7 +1,6 @@
 package net.redngreen.easypos.feature.onboarding.domain
 
 import kotlinx.coroutines.flow.Flow
-import net.redngreen.easypos.core.print.PrintState
 
 /** First-run wizard steps (task 11.2); persisted so a killed app resumes. */
 enum class OnboardingStep { PROFILE, PRINTER, PRODUCTS }
@@ -17,13 +16,12 @@ data class PrinterOption(
     val address: String,
 )
 
-/** Printer-selection snapshot for the wizard's optional printer step. */
-data class PrinterSetupSnapshot(
+/** Bonded-printer snapshot for the wizard's optional printer step. */
+data class PrinterDevicesSnapshot(
     val bluetoothAvailable: Boolean = true,
     val devices: List<PrinterOption> = emptyList(),
     val mac: String? = null,
     val widthMm: Int = 80,
-    val printState: PrintState = PrintState.Idle,
 )
 
 interface OnboardingRepository {
@@ -32,7 +30,7 @@ interface OnboardingRepository {
 
     suspend fun load(): Pair<OnboardingStep, ShopProfile?>
 
-    fun observePrinterState(): Flow<PrinterSetupSnapshot>
+    fun observePrinterDevices(): Flow<PrinterDevicesSnapshot>
 
     fun refreshDevices()
 

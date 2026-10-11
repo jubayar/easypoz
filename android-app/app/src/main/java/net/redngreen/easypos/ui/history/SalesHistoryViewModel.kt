@@ -22,9 +22,9 @@ import net.redngreen.easypos.core.database.dao.ProductDao
 import net.redngreen.easypos.core.database.dao.SaleDao
 import net.redngreen.easypos.core.database.dao.UserDao
 import net.redngreen.easypos.core.database.entity.Sale
-import net.redngreen.easypos.core.data.repo.ReceiptRepository
+import net.redngreen.easypos.feature.sell.domain.ReceiptRepository
 import net.redngreen.easypos.core.print.PdfReceiptWriter
-import net.redngreen.easypos.core.print.PrintController
+import net.redngreen.easypos.print.PrintController
 
 data class HistoryRow(
     val sale: Sale,
